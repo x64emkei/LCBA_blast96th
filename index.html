@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LCBA 96th Anniversary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lcbaBlue: '#002147', // Deep Royal Blue
+                        lcbaGold: '#D4AF37', // Metallic Gold
+                        lcbaGoldHover: '#B5952F',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #002147;
+            background-image: linear-gradient(to bottom right, #002147, #000a12); 
+            color: white;
+            min-height: 100vh;
+            overscroll-behavior: none; /* Prevent pull-to-refresh */
+        }
+        
+        /* Gold Accents */
+        .text-gold { color: #D4AF37; }
+        .border-gold { border-color: #D4AF37; }
+        .bg-gold { background-color: #D4AF37; }
+        
+        .preview-loader {
+            width: 50px; height: 50px; position: relative;
+            --c:no-repeat linear-gradient(#D4AF37 0 0);
+            background: var(--c) center/100% 10px, var(--c) center/10px 100%;
+        }
+        .preview-loader:before {
+            content:''; position: absolute; inset: 0;
+            background: var(--c) 0 0, var(--c) 100% 0, var(--c) 0 100%, var(--c) 100% 100%;
+            background-size: 15.5px 15.5px;
+            animation: l16 1.5s infinite cubic-bezier(0.3,1,0,1);
+        }
+        @keyframes l16 { 33% {inset:-10px;transform:rotate(0deg)} 66% {inset:-10px;transform:rotate(90deg)} 100% {inset:0;transform:rotate(90deg)} }
+        
+        /* Force hidden/block for logic */
+        .force-hidden { display: none !important; }
+        .force-visible { display: flex !important; }
+
+        #main-content { display: block; }
+        #browser-blocker { display: none; }
+        
+        /* Cursor for moving */
+        .cursor-move-all { cursor: move; cursor: -webkit-grabbing; }
+        
+        canvas { 
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 0.5rem; 
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+            touch-action: none; /* Critical for touch events */
+        }
+        .custom-transition { transition: all 0.3s ease-in-out; }
+        
+        /* Frame selection highlight */
+        .frame-selected { transform: scale(1.05); box-shadow: 0 0 0 4px #D4AF37; background-color: rgba(212, 175, 55, 0.2); }
+        
+        input[type="file"] { display: none; }
+        
+        /* Glass Effect */
+        .glass-container { 
+            background: rgba(0, 33, 71, 0.75); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+        }
+
+        #app-header { transition: padding 0.3s ease-in-out, background-color 0.3s ease-in-out; }
+        #app-header.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; background: rgba(0, 10, 18, 0.95); border-bottom: 1px solid #D4AF37; }
+        
+        /* Header elements scaling */
+        #lcba-seal-header { transition: all 0.3s ease; }
+        #app-header.scrolled #lcba-seal-header { width: 32px; height: 32px; }
+        .dpblast-logo-img { transition: all 0.3s ease; }
+        #app-header.scrolled .dpblast-logo-img { height: 24px; }
+        
+        .no-select {
+            -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
+            -moz-user-select: none; -ms-user-select: none; user-select: none;
+        }
+    </style>
+    
+    <!-- IMMEDIATE BROWSER CHECK SCRIPT -->
+    <script>
+        (function() {
+            var ua = navigator.userAgent || navigator.vendor || window.opera;
+            var isInApp = /(FBAN|FBAV|Instagram|LinkedIn|Twitter|Bytespider|Line|Discord|Snapchat|Messenger)/i.test(ua);
+            
+            window.showWarningIfNeeded = function() {
+                if (isInApp) {
+                    document.getElementById('main-content').classList.add('force-hidden');
+                    document.getElementById('browser-blocker').classList.remove('hidden');
+                    document.getElementById('browser-blocker').classList.add('force-visible');
+                    document.body.style.overflow = 'hidden'; 
+                }
+            };
+        })();
+    </script>
+</head>
+<body class="text-gray-100">
+
+    <!-- STRICT BROWSER BLOCKER -->
+    <div id="browser-blocker" class="hidden fixed inset-0 z-[9999] flex-col justify-center items-center bg-gray-900 p-4 text-center overflow-y-auto">
+        <div class="max-w-md w-full glass-container p-6 rounded-2xl border-2 border-lcbaGold">
+            <div class="flex justify-center mb-4">
+                <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 object-contain shadow-lg">
+            </div>
+            
+            <h2 class="text-2xl font-serif font-bold text-white mb-2">Open in System Browser</h2>
+            
+            <div class="bg-red-900/50 border border-red-500 rounded-lg p-3 mb-6">
+                <p class="text-white text-sm font-medium">
+                    ⚠️ App does not work in Facebook/Messenger/Instagram.
+                </p>
+            </div>
+            
+            <p class="text-gray-300 text-sm mb-6">
+                Please open this link in <strong>Chrome</strong> (Android) or <strong>Safari</strong> (iOS).
+            </p>
+
+            <!-- Android Instructions -->
+            <div class="bg-white/10 rounded-lg p-3 mb-3 text-left flex items-center gap-3">
+                <i data-lucide="smartphone" class="text-green-400"></i>
+                <div>
+                    <span class="block text-green-400 font-bold text-sm">Android</span>
+                    <span class="text-xs text-gray-300">Tap <strong>⋮</strong> (top right) → <strong>Open in Chrome</strong></span>
+                </div>
+            </div>
+
+            <!-- iOS Instructions -->
+            <div class="bg-white/10 rounded-lg p-3 mb-6 text-left flex items-center gap-3">
+                <i data-lucide="apple" class="text-blue-400"></i>
+                <div>
+                    <span class="block text-blue-400 font-bold text-sm">iOS (iPhone)</span>
+                    <span class="text-xs text-gray-300">Tap <strong>Share</strong> (bottom) → <strong>Open in Safari</strong></span>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-600 pt-4">
+                 <button id="copy-link-btn" class="w-full bg-lcbaGold text-lcbaBlue font-bold py-3 px-4 rounded-xl hover:bg-white transition flex items-center justify-center gap-2">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    Tap to Copy Link
+                </button>
+                <div id="copy-link-feedback" class="text-sm text-green-400 font-bold mt-2 h-5"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Website Content -->
+    <div id="main-content">
+        <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4 shadow-xl">
+            <div class="container mx-auto flex flex-row justify-center items-center gap-3 md:gap-5">
+                <img id="lcba-seal-header" src="LCBA_Seal.png" alt="LCBA Logo" class="w-12 h-12 md:w-16 md:h-16 shadow-lg shrink-0 object-contain">
+                <h1 class="text-base md:text-2xl font-serif font-bold text-white uppercase tracking-widest text-center whitespace-nowrap"><span class="text-lcbaGold">LCBA</span> 96th Anniversary</h1>
+                <div class="h-8 md:h-10 w-px bg-lcbaGold/50"></div>
+                <img src="dpblast_logo.png" alt="DPblast" class="dpblast-logo-img h-8 md:h-12 w-auto object-contain shrink-0">
+            </div>
+        </header>
+
+        <div class="container mx-auto px-4 py-8" style="padding-top: 150px;"> 
+            
+            <div class="text-center mb-10 flex flex-col items-center justify-center">
+                <img src="96th.2.png" alt="96 Years of Excellence" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-6">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold text-lcbaGold mb-3 tracking-wide">96 Years of Excellence</h2>
+                <p class="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto">Create your anniversary profile picture!</p>
+            </div>
+
+            <main class="glass-container max-w-xl mx-auto p-6 md:p-10 rounded-3xl shadow-2xl shadow-lcbaBlue/50 border-2 border-lcbaGold/30">
+                <div class="space-y-8">
+                    
+                    <!-- STEP 1 -->
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/10">
+                        <h3 class="text-lg font-bold text-lcbaGold mb-3 no-select uppercase tracking-wide">Step 1: Choose Frame Style</h3>
+                        <div class="grid grid-cols-2 gap-6">
+                            <button class="frame-btn group" data-frame-src="frame1.png">
+                                <div class="rounded-2xl border-4 border-transparent custom-transition bg-white/10 p-4 text-center aspect-square flex flex-col items-center justify-center hover:bg-white/20">
+                                    <div class="w-16 h-16 rounded-full border-4 border-lcbaGold mb-3 flex items-center justify-center text-lcbaGold text-2xl font-serif font-bold bg-lcbaBlue shadow-lg">A</div>
+                                    <span class="text-sm md:text-base font-bold text-white uppercase tracking-wider">Style A</span>
+                                </div>
+                            </button>
+                            <button class="frame-btn group" data-frame-src="frame2.png">
+                                <div class="rounded-2xl border-4 border-transparent custom-transition bg-white/10 p-4 text-center aspect-square flex flex-col items-center justify-center hover:bg-white/20">
+                                    <div class="w-16 h-16 rounded-full border-4 border-lcbaGold mb-3 flex items-center justify-center text-lcbaGold text-2xl font-serif font-bold bg-lcbaBlue shadow-lg">B</div>
+                                    <span class="text-sm md:text-base font-bold text-white uppercase tracking-wider">Style B</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/10">
+                        <label class="block text-lg font-bold text-lcbaGold mb-3 no-select uppercase tracking-wide">Step 2: Select Photo</label>
+                        <label for="image-upload-btn" class="w-full flex flex-col items-center justify-center bg-lcbaBlue border-2 border-lcbaGold text-lcbaGold font-bold py-6 px-4 rounded-xl cursor-pointer hover:bg-lcbaGold hover:text-lcbaBlue custom-transition shadow-lg uppercase tracking-wider group">
+                            <i data-lucide="image-plus" class="w-8 h-8 mb-2"></i>
+                            <span class="text-lg">Tap here to Upload Photo</span>
+                        </label>
+                        <input type="file" id="image-upload-btn" accept="image/*">
+                        <p id="file-name" class="text-base text-green-400 mt-3 text-center font-semibold h-6"></p>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div>
+                        <h3 class="text-lg font-bold text-lcbaGold mb-3 no-select uppercase tracking-wide">Step 3: Adjust & Download</h3>
+                        
+                        <!-- Canvas Container -->
+                        <div class="relative bg-black/50 rounded-xl border-2 border-gray-600 overflow-hidden shadow-inner w-full aspect-square touch-none">
+                            
+                            <!-- Guide Overlay -->
+                            <div class="absolute top-0 left-0 right-0 z-10 bg-black/60 backdrop-blur-sm py-2 text-center border-b border-white/10 pointer-events-none">
+                                <div class="flex items-center justify-center gap-2 text-xs font-bold text-yellow-400 uppercase tracking-widest">
+                                    <i data-lucide="move" class="w-4 h-4"></i>
+                                    <span>Move / Pinch / Scroll to adjust</span>
+                                </div>
+                            </div>
+
+                            <div id="preview-loader" class="preview-loader absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20" style="display: none;"></div>
+                            
+                            <!-- Actual Canvas -->
+                            <canvas id="canvas" class="w-full h-full cursor-move-all hidden"></canvas>
+                            
+                            <!-- Placeholder Text -->
+                            <div id="canvas-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 pointer-events-none">
+                                <i data-lucide="camera" class="w-12 h-12 mb-2 opacity-50"></i>
+                                <p class="text-lg">Photo Preview</p>
+                            </div>
+                        </div>
+
+                        <!-- Button Controls (Optional Fallback / Helper) -->
+                        <div class="mt-4 flex justify-between items-center bg-black/20 p-2 rounded-lg border border-white/5">
+                            <button id="zoom-out-btn" class="p-2 bg-lcbaBlue/50 rounded hover:bg-lcbaGold hover:text-lcbaBlue transition">
+                                <i data-lucide="minus" class="w-5 h-5"></i>
+                            </button>
+                            <input type="range" id="zoom-slider" min="0.1" max="3" step="0.05" value="1" class="w-full mx-4 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-lcbaGold">
+                            <button id="zoom-in-btn" class="p-2 bg-lcbaBlue/50 rounded hover:bg-lcbaGold hover:text-lcbaBlue transition">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-white/10">
+                        <button id="download-btn" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xl font-bold py-5 px-6 rounded-xl hover:from-white hover:to-gray-200 hover:text-lcbaBlue custom-transition shadow-xl disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed uppercase tracking-widest transform active:scale-95 flex items-center justify-center gap-3" disabled>
+                            <i data-lucide="download" class="w-6 h-6"></i>
+                            Download Image
+                        </button>
+                        <p id="download-error" class="text-base text-red-400 text-center mt-2 min-h-[1.5rem]"></p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <footer class="text-center py-12 px-4 mt-12 bg-black/60 border-t border-lcbaGold/20">
+            <h4 class="text-lcbaGold font-serif font-bold text-xl mb-6 tracking-wider leading-relaxed">CELEBRATING 96 YEARS OF<br>LAGUNA COLLEGE OF BUSINESS AND ARTS</h4>
+            
+            <div class="flex justify-center mb-8">
+                 <a href="https://www.facebook.com/LCBAofficial" target="_blank" class="bg-blue-800 border-2 border-blue-500 text-white text-lg font-bold py-3 px-8 rounded-full hover:bg-white hover:text-blue-900 custom-transition flex items-center gap-3 shadow-lg transform hover:scale-105">
+                    <i data-lucide="facebook" class="w-5 h-5"></i>
+                    Visit LCBA on Facebook
+                </a>
+            </div>
+
+            <div class="text-base text-gray-400 mb-8 space-y-2">
+                <p>Graphics by <span class="text-gray-100 font-bold">Miguel Madamba</span></p>
+                <p>Web design by <span class="text-gray-100 font-bold">Michael Ordenes</span></p>
+            </div>
+
+            <div class="border-t border-gray-700 pt-6 max-w-xs mx-auto">
+                <p class="text-sm text-gray-500">Visitor count</p>
+                <p id="visitor-count" class="text-2xl font-bold text-lcbaGold">0</p>
+            </div>
+            <p class="text-xs text-gray-600 mt-6">© 2026 All Rights Reserved.</p>
+        </footer>
+
+        <!-- Fixed Corner Logo -->
+        <div class="fixed bottom-6 right-6 z-40 pointer-events-none">
+             <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 md:w-24 md:h-24 shadow-2xl drop-shadow-lg opacity-90 object-contain">
+        </div>
+    </div>
+
+    <script>
+        // --- 1. INITIALIZATION & ICONS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            window.showWarningIfNeeded(); 
+        });
+
+        // --- 2. BROWSER BLOCKER COPY LINK ---
+        const copyLinkBtn = document.getElementById('copy-link-btn');
+        if(copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', () => {
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    const fb = document.getElementById('copy-link-feedback');
+                    fb.textContent = 'Link Copied!';
+                    setTimeout(() => fb.textContent = '', 3000);
+                }).catch(() => {
+                     // Fallback
+                    const fb = document.getElementById('copy-link-feedback');
+                    fb.textContent = 'Please copy URL manually from bar.';
+                    fb.classList.replace('text-green-400', 'text-red-400');
+                });
+            });
+        }
+
+        // --- 3. STICKY HEADER & COUNT ---
+        const header = document.getElementById('app-header');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 20);
+        });
+        
+        let count = localStorage.getItem('visitorCountLCBA96') || 0;
+        count = parseInt(count) + 1;
+        localStorage.setItem('visitorCountLCBA96', count);
+        document.getElementById('visitor-count').textContent = count;
+
+        // --- 4. APP LOGIC ---
+        const frameButtons = document.querySelectorAll('.frame-btn');
+        const imageUploadBtn = document.getElementById('image-upload-btn');
+        const fileNameDisplay = document.getElementById('file-name');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasPlaceholder = document.getElementById('canvas-placeholder');
+        const previewLoader = document.getElementById('preview-loader');
+        const downloadBtn = document.getElementById('download-btn');
+        const downloadError = document.getElementById('download-error');
+        const zoomSlider = document.getElementById('zoom-slider');
+
+        let selectedFrameSrc = null;
+        let userImage = null; // Image Object
+        
+        // Transform State
+        let state = {
+            scale: 1,
+            offsetX: 0,
+            offsetY: 0,
+            isDragging: false,
+            lastX: 0,
+            lastY: 0,
+            pinchDist: null
+        };
+
+        const frameImage = new Image();
+        frameImage.crossOrigin = "Anonymous";
+        const CANVAS_SIZE = 1080;
+
+        function initCanvas() {
+            canvas.width = CANVAS_SIZE;
+            canvas.height = CANVAS_SIZE;
+        }
+        initCanvas();
+
+        function draw() {
+            // 1. Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 2. Draw User Image (with transforms)
+            if (userImage) {
+                ctx.save();
+                // Move to center
+                ctx.translate(canvas.width/2, canvas.height/2);
+                ctx.translate(state.offsetX, state.offsetY);
+                ctx.scale(state.scale, state.scale);
+                // Draw centered
+                ctx.drawImage(userImage, -userImage.width/2, -userImage.height/2);
+                ctx.restore();
+            }
+
+            // 3. Draw Frame (static on top)
+            if (frameImage.complete && frameImage.src) {
+                ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // Frame Selection
+        frameButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                frameButtons.forEach(btn => {
+                    btn.firstElementChild.classList.remove('frame-selected', 'bg-white/20');
+                });
+                button.firstElementChild.classList.add('frame-selected', 'bg-white/20');
+                
+                selectedFrameSrc = button.dataset.frameSrc;
+                frameImage.src = selectedFrameSrc;
+                
+                // Show loader if image is being fetched
+                previewLoader.style.display = 'block';
+                frameImage.onload = () => {
+                    previewLoader.style.display = 'none';
+                    checkVisibility();
+                    draw();
+                };
+            });
+        });
+
+        // Image Upload
+        imageUploadBtn.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileNameDisplay.textContent = "Selected: " + (file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name);
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    userImage = img;
+                    
+                    // Reset Transforms to 'Cover' style
+                    // We want image to cover the 1080x1080 square
+                    const scaleW = CANVAS_SIZE / img.width;
+                    const scaleH = CANVAS_SIZE / img.height;
+                    state.scale = Math.max(scaleW, scaleH);
+                    state.offsetX = 0;
+                    state.offsetY = 0;
+                    
+                    zoomSlider.value = state.scale;
+                    zoomSlider.min = state.scale * 0.1; // Dynamic range
+                    zoomSlider.max = state.scale * 3;
+                    
+                    checkVisibility();
+                    draw();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function checkVisibility() {
+            if (selectedFrameSrc && userImage) {
+                canvas.classList.remove('hidden');
+                canvasPlaceholder.classList.add('hidden');
+                downloadBtn.disabled = false;
+            }
+        }
+
+        // --- INTERACTION HANDLERS (Move/Pinch/Scroll) ---
+        
+        // Helper: Mouse/Touch Coordinates mapped to canvas size? 
+        // Actually for panning we just need relative delta movements in screen pixels 
+        // then scaled slightly to match canvas feel.
+
+        // Mouse Events
+        canvas.addEventListener('mousedown', (e) => {
+            if(!userImage) return;
+            state.isDragging = true;
+            state.lastX = e.clientX;
+            state.lastY = e.clientY;
+            canvas.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!state.isDragging) return;
+            e.preventDefault();
+            const dx = e.clientX - state.lastX;
+            const dy = e.clientY - state.lastY;
+            
+            // Movement speed multiplier (since canvas is 1080px but displayed smaller)
+            // We approximate scale factor to make dragging feel 1:1 with finger
+            const rect = canvas.getBoundingClientRect();
+            const displayRatio = canvas.width / rect.width;
+            
+            state.offsetX += dx * displayRatio;
+            state.offsetY += dy * displayRatio;
+            
+            state.lastX = e.clientX;
+            state.lastY = e.clientY;
+            draw();
+        });
+
+        window.addEventListener('mouseup', () => {
+            state.isDragging = false;
+            canvas.style.cursor = 'move';
+        });
+
+        // Wheel Zoom
+        canvas.addEventListener('wheel', (e) => {
+            if(!userImage) return;
+            e.preventDefault();
+            const zoomSpeed = 0.001;
+            const newScale = state.scale - (e.deltaY * zoomSpeed * state.scale);
+            state.scale = Math.max(0.1, Math.min(newScale, 10)); // Clamp limits
+            zoomSlider.value = state.scale;
+            draw();
+        }, { passive: false });
+
+        // Touch Events (Pinch & Pan)
+        canvas.addEventListener('touchstart', (e) => {
+            if(!userImage) return;
+            if (e.touches.length === 1) {
+                state.isDragging = true;
+                state.lastX = e.touches[0].clientX;
+                state.lastY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+                state.isDragging = false;
+                state.pinchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                state.lastScale = state.scale;
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if(!userImage) return;
+            e.preventDefault(); // Prevent page scrolling
+
+            if (e.touches.length === 1 && state.isDragging) {
+                const dx = e.touches[0].clientX - state.lastX;
+                const dy = e.touches[0].clientY - state.lastY;
+                
+                const rect = canvas.getBoundingClientRect();
+                const displayRatio = canvas.width / rect.width;
+
+                state.offsetX += dx * displayRatio;
+                state.offsetY += dy * displayRatio;
+                
+                state.lastX = e.touches[0].clientX;
+                state.lastY = e.touches[0].clientY;
+                draw();
+            } else if (e.touches.length === 2 && state.pinchDist) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const zoomFactor = dist / state.pinchDist;
+                state.scale = state.lastScale * zoomFactor;
+                zoomSlider.value = state.scale;
+                draw();
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            state.isDragging = false;
+            state.pinchDist = null;
+        });
+
+        // Slider Control
+        zoomSlider.addEventListener('input', (e) => {
+            state.scale = parseFloat(e.target.value);
+            draw();
+        });
+        document.getElementById('zoom-in-btn').addEventListener('click', () => {
+            state.scale *= 1.1; zoomSlider.value = state.scale; draw();
+        });
+        document.getElementById('zoom-out-btn').addEventListener('click', () => {
+            state.scale *= 0.9; zoomSlider.value = state.scale; draw();
+        });
+
+        // Download
+        downloadBtn.addEventListener('click', () => {
+            if (downloadBtn.disabled) return;
+            
+            const link = document.createElement('a');
+            link.download = 'LCBA_96th_Anniversary.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+
+    </script>
+</body>
+</html>
