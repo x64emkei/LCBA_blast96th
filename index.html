@@ -8,19 +8,23 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        lcbaBlue: '#002147', // Deep Royal Blue
-                        lcbaGold: '#D4AF37', // Metallic Gold
-                        lcbaGoldHover: '#B5952F',
+                        deepBlue: '#0f172a',    // Dark Slate
+                        royalBlue: '#1e3a8a',   // Strong Blue
+                        royalBlueLight: '#3b82f6',
+                        gold: '#fbbf24',        // Amber 400
+                        goldDark: '#b45309',    // Amber 700
+                        goldLight: '#fcd34d',   // Amber 300
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Cinzel', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
                     }
                 }
             }
@@ -28,807 +32,461 @@
     </script>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #ffffff;
-            color: white;
+            font-family: 'Montserrat', sans-serif;
+            /* Darker Gradient Theme */
+            background: linear-gradient(180deg, #020617 0%, #172554 100%);
+            color: #f8fafc;
             min-height: 100vh;
-            overscroll-behavior: none; /* Prevent pull-to-refresh */
-        }
-        
-        /* Gold Accents */
-        .text-gold { color: #D4AF37; }
-        .border-gold { border-color: #D4AF37; }
-        .bg-gold { background-color: #D4AF37; }
-        
-        .preview-loader {
-            width: 50px; height: 50px; position: relative;
-            --c:no-repeat linear-gradient(#D4AF37 0 0);
-            background: var(--c) center/100% 10px, var(--c) center/10px 100%;
-        }
-        .preview-loader:before {
-            content:''; position: absolute; inset: 0;
-            background: var(--c) 0 0, var(--c) 100% 0, var(--c) 0 100%, var(--c) 100% 100%;
-            background-size: 15.5px 15.5px;
-            animation: l16 1.5s infinite cubic-bezier(0.3,1,0,1);
-        }
-        @keyframes l16 { 33% {inset:-10px;transform:rotate(0deg)} 66% {inset:-10px;transform:rotate(90deg)} 100% {inset:0;transform:rotate(90deg)} }
-        
-        /* Force hidden/block for logic */
-        .force-hidden { display: none !important; }
-        .force-visible { display: flex !important; }
-
-        #main-content { display: none; opacity: 0; }
-        #main-content.loaded { display: block; animation: fadeIn 0.5s ease-in forwards; }
-        #browser-blocker { display: none; }
-        
-        /* Loading Screen Styles */
-        #loading-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        #loading-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease-out;
-        }
-        
-        .loading-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        #loading-seal {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            object-fit: contain;
-            opacity: 0;
-            transform: translateX(0) translateY(-50%);
-            z-index: 2;
-        }
-        
-        #loading-logo {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            object-fit: contain;
-            opacity: 0;
-            transform: translateX(0) translateY(-50%);
-            z-index: 1;
+            overscroll-behavior: none;
         }
 
-        #loading-text {
-            position: absolute;
-            font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #D4AF37;
-            opacity: 0;
-            letter-spacing: normal;
-            z-index: 3;
-            top: 60%;
-            transform: translateY(-50%);
-        }
-        
-        /* Loading Animations */
-        @keyframes sealFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateX(0) translateY(-50%);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) translateY(-50%);
-            }
+        /* Gold Gradient Text */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #fcd34d, #fbbf24, #b45309);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        @keyframes sealSlideLeft {
-            0% {
-                opacity: 1;
-                transform: translateX(0) translateY(-50%);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(-100%) translateY(-50%);
-            }
+        /* Glassmorphism Dark */
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        @keyframes logoFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateX(0) translateY(-50%);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) translateY(-50%);
-            }
-        }
-        
-        @keyframes logoSlideRight {
-            0% {
-                opacity: 1;
-                transform: translateX(0) translateY(-50%);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(100%) translateY(-50%);
-            }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes textFadeIn {
-            0% {
-                opacity: 0;
-                letter-spacing: 0px;
-            }
-            100% {
-                opacity: 1;
-                letter-spacing: 0px;
-            }
-        }
-
-        @keyframes textLetterSpacing {
-            0% {
-                letter-spacing: 0px;
-            }
-            100% {
-                letter-spacing: 12px;
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        /* Cursor for moving */
-        .cursor-move-all { cursor: move; cursor: -webkit-grabbing; }
-        
-        canvas { 
-            max-width: 100%; 
-            height: auto; 
-            border-radius: 0.5rem; 
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
-            touch-action: none; /* Critical for touch events */
-        }
-        .custom-transition { transition: all 0.3s ease-in-out; }
-        
-        /* Frame selection highlight */
-        .frame-selected { transform: scale(1.05); box-shadow: 0 0 0 4px #D4AF37; background-color: rgba(212, 175, 55, 0.2); }
-        
-        input[type="file"] { display: none; }
-        
-        /* Glass Effect */
-        .glass-container { 
-            background: rgba(0, 33, 71, 0.75); 
-            backdrop-filter: blur(16px); 
-            border: 1px solid rgba(212, 175, 55, 0.3); 
-        }
-
-        #app-header { transition: padding 0.3s ease-in-out, background-color 0.3s ease-in-out; }
-        #app-header.scrolled { padding-top: 0.5rem; padding-bottom: 0.5rem; background: rgba(0, 10, 18, 0.95); border-bottom: 1px solid #D4AF37; }
-        
-        /* Header elements scaling */
-        #lcba-seal-header { transition: all 0.3s ease; }
-        #app-header.scrolled #lcba-seal-header { width: 32px; height: 32px; }
-        .dpblast-logo-img { transition: all 0.3s ease; }
-        #app-header.scrolled .dpblast-logo-img { height: 24px; }
-        
-        .no-select {
-            -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
-            -moz-user-select: none; -ms-user-select: none; user-select: none;
-        }
-
-        /* Card Page Navigation */
-        .card-page {
-            display: none;
-            width: 100%;
-        }
-        .card-page.active {
-            display: flex;
-        }
-        .page-indicator.active {
-            background-color: #D4AF37;
-            width: 24px;
-        }
-        .page-indicator {
+        /* Custom Input Styling */
+        .custom-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
             transition: all 0.3s ease;
         }
+        .custom-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #fbbf24;
+            outline: none;
+        }
+
+        /* Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #fbbf24;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        /* Canvas */
+        canvas { 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            border: 2px solid #fbbf24;
+        }
+
+        /* Utils */
+        .force-hidden { display: none !important; }
+        .force-visible { display: flex !important; }
+        
+        #main-content { opacity: 0; transition: opacity 0.5s ease; }
+        #main-content.loaded { opacity: 1; }
+
+        /* Step Animations */
+        .step-content {
+            display: none;
+            animation: fadeInSlide 0.4s ease forwards;
+        }
+        .step-content.active { display: block; }
+        
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading Spinner */
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #fbbf24;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Cursor */
+        .cursor-move-all { cursor: move; cursor: -webkit-grabbing; }
     </style>
     
-    <!-- IMMEDIATE BROWSER CHECK SCRIPT -->
     <script>
         (function() {
             var ua = navigator.userAgent || navigator.vendor || window.opera;
-            var isInApp = /(FBAN|FBAV|Instagram|LinkedIn|Twitter|Bytespider|Line|Discord|Snapchat|Messenger)/i.test(ua);
-            
-            window.showWarningIfNeeded = function() {
-                if (isInApp) {
-                    document.getElementById('main-content').classList.add('force-hidden');
-                    document.getElementById('browser-blocker').classList.remove('hidden');
-                    document.getElementById('browser-blocker').classList.add('force-visible');
-                    document.body.style.overflow = 'hidden'; 
-                }
-            };
+            var isInApp = /(FBAN|FBAV|Instagram|LinkedIn|Twitter|Bytespider)/i.test(ua);
+            window.isBlockedBrowser = isInApp;
         })();
     </script>
 </head>
-<body class="text-gray-100">
+<body>
 
-    <!-- LOADING SCREEN -->
-    <div id="loading-screen">
-        <div class="loading-container">
-            <img id="loading-seal" src="LCBA_Seal.png" alt="LCBA Seal" />
-            <img id="loading-logo" src="96th_logo.png" alt="96th Anniversary Logo" />
-            <div id="loading-text">𝟗𝟔𝐭𝐡 𝐅𝐨𝐮𝐧𝐝𝐢𝐧𝐠 𝐀𝐧𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐫𝐲</div>
+    <div id="loading-screen" class="fixed inset-0 z-[100] bg-[#020617] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative">
+            <div class="loader mb-4"></div>
+        </div>
+        <p class="text-gold font-serif tracking-widest text-sm animate-pulse">LOADING EXPERIENCE</p>
+    </div>
+
+    <div id="browser-blocker" class="hidden fixed inset-0 z-[9999] flex-col justify-center items-center bg-[#020617] p-6 text-center">
+        <div class="max-w-md w-full glass-panel p-8 rounded-2xl border border-red-500/30">
+            <i data-lucide="alert-triangle" class="w-16 h-16 text-gold mx-auto mb-4"></i>
+            <h2 class="text-2xl font-serif font-bold text-white mb-2">Browser Not Supported</h2>
+            <p class="text-gray-300 mb-6">Facebook and Instagram browsers prevent image downloads. Please open in your system browser.</p>
+            
+            <div class="flex flex-col gap-3">
+                <div class="bg-white/5 p-3 rounded-lg flex items-center gap-3">
+                    <span class="text-2xl">🤖</span>
+                    <div class="text-left">
+                        <p class="font-bold text-white text-sm">Android</p>
+                        <p class="text-xs text-gray-400">Tap <span class="text-gold">⋮</span> → Open in Chrome</p>
+                    </div>
+                </div>
+                <div class="bg-white/5 p-3 rounded-lg flex items-center gap-3">
+                    <span class="text-2xl">🍎</span>
+                    <div class="text-left">
+                        <p class="font-bold text-white text-sm">iPhone (iOS)</p>
+                        <p class="text-xs text-gray-400">Tap <span class="text-gold">Share</span> → Open in Safari</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="copy-link-btn" class="mt-6 w-full bg-gold text-deepBlue font-bold py-3 rounded-xl hover:bg-goldLight transition">
+                Copy Link to Clipboard
+            </button>
+            <p id="copy-feedback" class="text-green-400 text-sm mt-2 h-5"></p>
         </div>
     </div>
 
-    <!-- STRICT BROWSER BLOCKER -->
-    <div id="browser-blocker" class="hidden fixed inset-0 z-[9999] flex-col justify-center items-center bg-gray-900 p-4 text-center overflow-y-auto">
-        <div class="max-w-md w-full glass-container p-6 rounded-2xl border-2 border-lcbaGold">
-            <div class="flex justify-center mb-4">
-                <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 object-contain shadow-lg">
-            </div>
-            
-            <h2 class="text-2xl font-serif font-bold text-white mb-2">Open in System Browser</h2>
-            
-            <div class="bg-red-900/50 border border-red-500 rounded-lg p-3 mb-6">
-                <p class="text-white text-sm font-medium">
-                    ⚠️ App does not work in Facebook/Messenger/Instagram.
-                </p>
-            </div>
-            
-            <p class="text-gray-300 text-sm mb-6">
-                Please open this link in <strong>Chrome</strong> (Android) or <strong>Safari</strong> (iOS).
-            </p>
-
-            <!-- Android Instructions -->
-            <div class="bg-white/10 rounded-lg p-3 mb-3 text-left flex items-center gap-3">
-                <i data-lucide="smartphone" class="text-green-400"></i>
-                <div>
-                    <span class="block text-green-400 font-bold text-sm">Android</span>
-                    <span class="text-xs text-gray-300">Tap <strong>⋮</strong> (top right) → <strong>Open in Chrome</strong></span>
-                </div>
-            </div>
-
-            <!-- iOS Instructions -->
-            <div class="bg-white/10 rounded-lg p-3 mb-6 text-left flex items-center gap-3">
-                <i data-lucide="apple" class="text-blue-400"></i>
-                <div>
-                    <span class="block text-blue-400 font-bold text-sm">iOS (iPhone)</span>
-                    <span class="text-xs text-gray-300">Tap <strong>Share</strong> (bottom) → <strong>Open in Safari</strong></span>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-600 pt-4">
-                 <button id="copy-link-btn" class="w-full bg-lcbaGold text-lcbaBlue font-bold py-3 px-4 rounded-xl hover:bg-white transition flex items-center justify-center gap-2">
-                    <i data-lucide="copy" class="w-4 h-4"></i>
-                    Tap to Copy Link
-                </button>
-                <div id="copy-link-feedback" class="text-sm text-green-400 font-bold mt-2 h-5"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Website Content -->
     <div id="main-content">
-        <header id="app-header" class="fixed top-0 left-0 right-0 z-50 glass-container p-4 shadow-xl">
-            <div class="container mx-auto flex flex-row justify-center items-center gap-3 md:gap-5">
-                <img id="lcba-seal-header" src="LCBA_Seal.png" alt="LCBA Logo" class="w-12 h-12 md:w-16 md:h-16 shadow-lg shrink-0 object-contain">
-                <h1 class="text-base md:text-2xl font-serif font-bold text-white uppercase tracking-widest text-center whitespace-nowrap"><span class="text-lcbaGold">LCBA</span> 96th Anniversary</h1>
-                <div class="h-8 md:h-10 w-px bg-lcbaGold/50"></div>
-                <img src="dpblast_logo.png" alt="DPblast" class="dpblast-logo-img h-8 md:h-12 w-auto object-contain shrink-0">
+        <header class="fixed top-0 left-0 right-0 z-50 glass-dark shadow-2xl border-b border-white/5">
+            <div class="container mx-auto px-4 h-16 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="LCBA_Seal.png" alt="LCBA" class="w-10 h-10 object-contain drop-shadow-lg">
+                    <div class="h-6 w-px bg-white/20"></div>
+                    <img src="dpblast_logo.png" alt="DP Blast" class="h-8 w-auto object-contain opacity-80">
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gold uppercase tracking-[0.2em] font-bold">96th Anniversary</p>
+                </div>
             </div>
         </header>
 
-        <div class="container mx-auto px-4 py-8" style="padding-top: 150px;"> 
+        <div class="container mx-auto px-4 pt-28 pb-12 max-w-xl">
             
-            <div class="text-center mb-10 flex flex-col items-center justify-center">
-                <img src="96th_logo.png" alt="96 Years of Excellence" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-6">
-                <h2 class="text-3xl md:text-5xl font-serif font-bold text-lcbaGold mb-3 tracking-wide">96 Years of Excellence</h2>
-                <p class="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto">Create your anniversary profile picture!</p>
+            <div class="text-center mb-8 animate-[fadeIn_1s_ease-out]">
+                <img src="96th_logo.png" alt="96 Logo" class="w-32 h-32 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-2">96 Years of <span class="text-gradient-gold">Excellence</span></h1>
+                <p class="text-blue-200 text-sm font-medium tracking-wide">CREATE YOUR ANNIVERSARY FRAME</p>
             </div>
 
-            <main class="glass-container max-w-xl mx-auto rounded-3xl shadow-2xl shadow-lcbaBlue/50 border-2 border-lcbaGold/30 overflow-hidden">
-                <!-- Card Navigation Container -->
-                <div class="relative">
-                    <!-- Navigation Arrows -->
-                    <button id="prev-btn" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-lcbaGold/90 hover:bg-lcbaGold text-lcbaBlue w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition opacity-0 pointer-events-none" style="transition: opacity 0.3s;">
-                        <i data-lucide="chevron-left" class="w-6 h-6"></i>
-                    </button>
-                    <button id="next-btn" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-lcbaGold/90 hover:bg-lcbaGold text-lcbaBlue w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition">
-                        <i data-lucide="chevron-right" class="w-6 h-6"></i>
-                    </button>
+            <div class="flex justify-between items-center mb-8 px-4 relative">
+                <div class="absolute left-0 right-0 top-1/2 h-0.5 bg-white/10 -z-10"></div>
+                <div id="step-ind-1" class="w-10 h-10 rounded-full bg-gold text-deepBlue font-bold flex items-center justify-center shadow-[0_0_15px_rgba(251,191,36,0.5)] transition-all">1</div>
+                <div id="step-ind-2" class="w-10 h-10 rounded-full bg-slate-700 text-gray-400 font-bold flex items-center justify-center border border-white/10 transition-all">2</div>
+                <div id="step-ind-3" class="w-10 h-10 rounded-full bg-slate-700 text-gray-400 font-bold flex items-center justify-center border border-white/10 transition-all">3</div>
+            </div>
 
-                    <!-- Card Pages Container -->
-                    <div id="card-pages" class="relative overflow-hidden">
-                        <!-- PAGE 1: Enter Name & Caption Preview -->
-                        <div class="card-page active p-6 md:p-10 min-h-[500px] flex flex-col">
-                            <div class="flex-1 space-y-6">
-                                <div class="text-center mb-6">
-                                    <h3 class="text-2xl font-serif font-bold text-lcbaGold mb-2 uppercase tracking-wider">Step 1</h3>
-                                    <p class="text-gray-300 text-sm">Enter Your Name</p>
-                                </div>
-                                
-                                <div class="bg-black/30 p-6 rounded-xl border-2 border-lcbaGold/30">
-                                    <label class="block text-lg font-bold text-lcbaGold mb-3 no-select uppercase tracking-wide">Your Name</label>
-                                    <input type="text" id="user-name-input" placeholder="Enter your full name" class="w-full bg-lcbaBlue/50 border-2 border-lcbaGold/50 text-white font-semibold py-4 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-lcbaGold focus:border-lcbaGold placeholder-gray-400 tracking-wide">
-                                
-                                    <!-- Caption Preview -->
-                                    <div class="mt-6 pt-6 border-t border-lcbaGold/30">
-                                        <label class="block text-sm font-bold text-lcbaGold mb-3 no-select uppercase tracking-wide">Caption Preview</label>
-                                        <div id="caption-preview" class="bg-black/40 p-4 rounded-lg border border-lcbaGold/20 min-h-[200px] max-h-[300px] overflow-y-auto text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">
-                                            <span class="text-gray-500 italic">Enter your name to see preview...</span>
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="glass-panel rounded-3xl p-1 shadow-2xl overflow-hidden">
+                
+                <div id="step-1" class="step-content active p-6 md:p-8">
+                    <h2 class="text-2xl font-serif text-white mb-1">Who are you?</h2>
+                    <p class="text-gray-400 text-sm mb-6">Enter your name to generate your caption.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gold text-xs font-bold uppercase tracking-wider mb-2">Full Name</label>
+                            <input type="text" id="user-name" class="custom-input w-full p-4 rounded-xl text-lg placeholder-gray-500" placeholder="e.g. Juan Dela Cruz">
+                        </div>
+                        
+                        <div class="bg-black/30 rounded-xl p-4 border border-white/5">
+                            <label class="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Caption Preview</label>
+                            <div id="caption-preview" class="text-gray-300 text-sm italic leading-relaxed h-32 overflow-y-auto pr-2 custom-scrollbar">
+                                Start typing your name above to see the magic happen...
                             </div>
                         </div>
 
-                        <!-- PAGE 2: Select Photo -->
-                        <div class="card-page p-6 md:p-10 min-h-[500px] flex flex-col hidden">
-                            <div class="flex-1 flex flex-col justify-center space-y-6">
-                                <div class="text-center mb-6">
-                                    <h3 class="text-2xl font-serif font-bold text-lcbaGold mb-2 uppercase tracking-wider">Step 2</h3>
-                                    <p class="text-gray-300 text-sm">Upload Your Photo</p>
-                                </div>
-                                
-                                <div class="bg-black/30 p-6 rounded-xl border-2 border-lcbaGold/30">
-                                    <label for="image-upload-btn" class="w-full flex flex-col items-center justify-center bg-lcbaBlue/50 border-2 border-lcbaGold/50 text-lcbaGold font-bold py-8 px-4 rounded-xl cursor-pointer hover:bg-lcbaGold hover:text-lcbaBlue custom-transition shadow-lg uppercase tracking-wider group">
-                                        <i data-lucide="image-plus" class="w-12 h-12 mb-3"></i>
-                                        <span class="text-lg">Tap here to Upload Photo</span>
-                                    </label>
-                                    <input type="file" id="image-upload-btn" accept="image/*">
-                                    <p id="file-name" class="text-base text-green-400 mt-4 text-center font-semibold min-h-[1.5rem]"></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- PAGE 3: Adjust & Download -->
-                        <div class="card-page p-6 md:p-10 min-h-[500px] flex flex-col hidden">
-                            <div class="flex-1 space-y-6">
-                                <div class="text-center mb-6">
-                                    <h3 class="text-2xl font-serif font-bold text-lcbaGold mb-2 uppercase tracking-wider">Step 3</h3>
-                                    <p class="text-gray-300 text-sm">Adjust & Download</p>
-                                </div>
-                                
-                                <!-- Canvas Container -->
-                                <div class="relative bg-black/50 rounded-xl border-2 border-lcbaGold/30 overflow-hidden shadow-inner w-full aspect-square touch-none">
-                                    
-                                    <!-- Guide Overlay -->
-                                    <div class="absolute top-0 left-0 right-0 z-10 bg-black/60 backdrop-blur-sm py-2 text-center border-b border-lcbaGold/30 pointer-events-none">
-                                        <div class="flex items-center justify-center gap-2 text-xs font-bold text-lcbaGold uppercase tracking-widest">
-                                            <i data-lucide="move" class="w-4 h-4"></i>
-                                            <span>Move / Pinch / Scroll to adjust</span>
-                                        </div>
-                                    </div>
-
-                                    <div id="preview-loader" class="preview-loader absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20" style="display: none;"></div>
-                                    
-                                    <!-- Actual Canvas -->
-                                    <canvas id="canvas" class="w-full h-full cursor-move-all"></canvas>
-                                    
-                                    <!-- Placeholder Text -->
-                                    <div id="canvas-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 pointer-events-none hidden">
-                                        <i data-lucide="camera" class="w-12 h-12 mb-2 opacity-50"></i>
-                                        <p class="text-lg">Photo Preview</p>
-                                    </div>
-                                </div>
-
-                                <!-- Button Controls -->
-                                <div class="flex justify-between items-center bg-black/30 p-3 rounded-lg border border-lcbaGold/30">
-                                    <button id="zoom-out-btn" class="p-2 bg-lcbaBlue/50 hover:bg-lcbaGold hover:text-lcbaBlue rounded transition">
-                                        <i data-lucide="minus" class="w-5 h-5"></i>
-                                    </button>
-                                    <input type="range" id="zoom-slider" min="0.1" max="3" step="0.05" value="1" class="w-full mx-4 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-lcbaGold">
-                                    <button id="zoom-in-btn" class="p-2 bg-lcbaBlue/50 hover:bg-lcbaGold hover:text-lcbaBlue rounded transition">
-                                        <i data-lucide="plus" class="w-5 h-5"></i>
-                                    </button>
-                                </div>
-
-                                <div class="space-y-4 pt-4 border-t border-lcbaGold/30">
-                                    <button id="download-btn" class="w-full bg-gradient-to-r from-lcbaGold to-yellow-500 text-lcbaBlue text-xl font-bold py-5 px-6 rounded-xl hover:from-white hover:to-gray-200 hover:text-lcbaBlue custom-transition shadow-xl disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed uppercase tracking-widest transform active:scale-95 flex items-center justify-center gap-3" disabled>
-                                        <i data-lucide="download" class="w-6 h-6"></i>
-                                        Download Image
-                                    </button>
-                                    <p id="download-error" class="text-base text-red-400 text-center min-h-[1.5rem]"></p>
-                                    
-                                    <button id="copy-caption-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xl font-bold py-5 px-6 rounded-xl hover:from-blue-400 hover:to-blue-500 custom-transition shadow-xl disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed uppercase tracking-widest transform active:scale-95 flex items-center justify-center gap-3" disabled>
-                                        <i data-lucide="copy" class="w-6 h-6"></i>
-                                        Copy Caption
-                                    </button>
-                                    <p id="copy-caption-feedback" class="text-base text-green-400 text-center min-h-[1.5rem]"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Page Indicators -->
-                    <div class="flex justify-center gap-2 p-4 bg-black/20 border-t border-lcbaGold/30">
-                        <span class="page-indicator active w-2 h-2 rounded-full bg-lcbaGold"></span>
-                        <span class="page-indicator w-2 h-2 rounded-full bg-gray-600"></span>
-                        <span class="page-indicator w-2 h-2 rounded-full bg-gray-600"></span>
+                        <button onclick="goToStep(2)" class="w-full bg-gold hover:bg-goldLight text-deepBlue font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2 mt-4">
+                            Next Step <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
                     </div>
                 </div>
-            </main>
+
+                <div id="step-2" class="step-content p-6 md:p-8">
+                    <h2 class="text-2xl font-serif text-white mb-1">Upload Photo</h2>
+                    <p class="text-gray-400 text-sm mb-6">Choose a clear photo of yourself.</p>
+
+                    <label class="relative group cursor-pointer block">
+                        <div class="border-2 border-dashed border-white/20 rounded-2xl p-10 text-center hover:border-gold hover:bg-white/5 transition-all">
+                            <div class="w-16 h-16 rounded-full bg-blue-900/50 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                <i data-lucide="image-plus" class="w-8 h-8 text-gold"></i>
+                            </div>
+                            <p class="text-white font-medium">Tap to Select Photo</p>
+                            <p class="text-gray-500 text-xs mt-2">Supports JPG, PNG</p>
+                        </div>
+                        <input type="file" id="image-upload" accept="image/*" class="hidden">
+                    </label>
+
+                    <div class="flex gap-3 mt-6">
+                        <button onclick="goToStep(1)" class="flex-1 bg-transparent border border-white/20 text-white font-bold py-4 rounded-xl hover:bg-white/5 transition">
+                            Back
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step-3" class="step-content p-6 md:p-8">
+                    <h2 class="text-2xl font-serif text-white mb-1">Final Adjustments</h2>
+                    <p class="text-gray-400 text-sm mb-6">Pinch or drag to position your photo.</p>
+
+                    <div class="relative w-full aspect-square bg-black/50 rounded-lg overflow-hidden border border-white/10 mb-6 group">
+                        <div class="absolute top-4 left-0 right-0 text-center pointer-events-none z-10 opacity-70">
+                            <span class="bg-black/60 text-white text-[10px] px-3 py-1 rounded-full backdrop-blur-sm border border-white/10">
+                                <i data-lucide="move" class="inline w-3 h-3 mr-1"></i> DRAG & PINCH
+                            </span>
+                        </div>
+                        
+                        <canvas id="canvas" class="w-full h-full cursor-move-all block"></canvas>
+                    </div>
+
+                    <div class="flex items-center gap-4 mb-6 bg-black/20 p-3 rounded-xl border border-white/5">
+                        <i data-lucide="minus" class="w-4 h-4 text-gray-400"></i>
+                        <input type="range" id="zoom-slider" min="0.1" max="3" step="0.05" value="1" class="flex-1">
+                        <i data-lucide="plus" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+
+                    <div class="space-y-3">
+                        <button id="download-btn" class="w-full bg-gradient-to-r from-gold to-goldDark text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-transform active:scale-95 flex items-center justify-center gap-2">
+                            <i data-lucide="download" class="w-5 h-5"></i> Download Image
+                        </button>
+                        
+                        <button id="copy-caption-btn" class="w-full bg-royalBlue hover:bg-blue-800 text-white font-bold py-4 rounded-xl border border-white/10 transition-all active:scale-95 flex items-center justify-center gap-2">
+                            <i data-lucide="copy" class="w-5 h-5"></i> Copy Caption
+                        </button>
+                    </div>
+                     <button onclick="goToStep(2)" class="mt-4 w-full text-gray-500 text-sm hover:text-white">Start Over / Change Photo</button>
+                </div>
+
+            </div>
+
         </div>
 
-        <footer class="text-center py-12 px-4 mt-12 bg-black/60 border-t border-lcbaGold/20">
-            <h4 class="text-lcbaGold font-serif font-bold text-xl mb-6 tracking-wider leading-relaxed">CELEBRATING 96 YEARS OF<br>LAGUNA COLLEGE OF BUSINESS AND ARTS</h4>
+        <footer class="bg-[#020617] text-center py-10 border-t border-white/10">
+            <h3 class="font-serif text-gold text-lg font-bold tracking-widest mb-6">LAGUNA COLLEGE OF<br>BUSINESS AND ARTS</h3>
             
-            <div class="flex justify-center mb-8">
-                 <a href="https://www.facebook.com/LCBAofficial" target="_blank" class="bg-blue-800 border-2 border-blue-500 text-white text-lg font-bold py-3 px-8 rounded-full hover:bg-white hover:text-blue-900 custom-transition flex items-center gap-3 shadow-lg transform hover:scale-105">
-                    <i data-lucide="facebook" class="w-5 h-5"></i>
-                    Visit LCBA on Facebook
-                </a>
-            </div>
+            <a href="https://www.facebook.com/LCBAofficial" target="_blank" class="inline-flex items-center gap-2 text-blue-300 hover:text-white transition-colors mb-8">
+                <i data-lucide="facebook" class="w-5 h-5"></i> Visit Official Page
+            </a>
 
-            <div class="text-base text-gray-400 mb-8 space-y-2">
-                <p>Graphics by <span class="text-gray-100 font-bold">Miguel Madamba</span></p>
-                <p>Web design by <span class="text-gray-100 font-bold">Michael Ordenes</span></p>
+            <div class="text-xs text-gray-500 space-y-1">
+                <p>Graphics by Miguel Madamba • Web by Michael Ordenes</p>
+                <p>Visitor Count: <span id="visitor-count" class="text-gold font-bold">0</span></p>
+                <p class="mt-4 opacity-50">© 2026 LCBA. All Rights Reserved.</p>
             </div>
-
-            <div class="border-t border-gray-700 pt-6 max-w-xs mx-auto">
-                <p class="text-sm text-gray-500">Visitor count</p>
-                <p id="visitor-count" class="text-2xl font-bold text-lcbaGold">0</p>
-            </div>
-            <p class="text-xs text-gray-600 mt-6">© 2026 All Rights Reserved.</p>
         </footer>
-
-        <!-- Fixed Corner Logo -->
-        <div class="fixed bottom-6 right-6 z-40 pointer-events-none">
-             <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 md:w-24 md:h-24 shadow-2xl drop-shadow-lg opacity-90 object-contain">
-        </div>
     </div>
 
     <script>
-        // --- 1. LOADING SCREEN ANIMATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check for in-app browser first
-            window.showWarningIfNeeded();
-            
-            // Only show loading screen if not in blocked browser
-            const browserBlocker = document.getElementById('browser-blocker');
-            if (!browserBlocker.classList.contains('force-visible')) {
-                const loadingScreen = document.getElementById('loading-screen');
-                const loadingSeal = document.getElementById('loading-seal');
-                const loadingLogo = document.getElementById('loading-logo');
-                const mainContent = document.getElementById('main-content');
-                
-                const loadingText = document.getElementById('loading-text');
-                
-                // Phase 1: Seal fades in at center (0-1s)
-                loadingSeal.style.animation = 'sealFadeIn 1s ease-out forwards';
-                
-                // Phase 2: Seal slides left off-center (1-1.5s)
-                setTimeout(() => {
-                    loadingSeal.style.animation = 'sealSlideLeft 0.5s ease-in-out forwards';
-                }, 1000);
-                
-                // Phase 3: 96th logo fades in beneath (lower y position) (1-1.5s)
-                setTimeout(() => {
-                    loadingLogo.style.animation = 'logoFadeIn 0.5s ease-out forwards';
-                }, 1000);
-                
-                // Phase 4: 96th logo slides right off-center (1.5-2s)
-                setTimeout(() => {
-                    loadingLogo.style.animation = 'logoSlideRight 0.5s ease-in-out forwards';
-                }, 1500);
-                
-                // Phase 5: Text fades in at center (2-2.5s)
-                setTimeout(() => {
-                    loadingText.style.animation = 'textFadeIn 0.5s ease-out forwards';
-                }, 2000);
-                
-                // Phase 6: Text letter spacing expands (2.5-4s)
-                setTimeout(() => {
-                    loadingText.style.animation = 'textLetterSpacing 1.5s ease-out forwards';
-                }, 2500);
-                
-                // Phase 7: Loading screen fades out, main content fades in (4-4.5s)
-                setTimeout(() => {
-                    loadingScreen.classList.add('hidden');
-                    mainContent.classList.add('loaded');
-                    lucide.createIcons();
-                }, 4000);
-            } else {
-                // If browser blocked, just initialize icons
-                lucide.createIcons();
-            }
-        });
-
-        // --- 2. BROWSER BLOCKER COPY LINK ---
-        const copyLinkBtn = document.getElementById('copy-link-btn');
-        if(copyLinkBtn) {
-            copyLinkBtn.addEventListener('click', () => {
-                const url = window.location.href;
-                navigator.clipboard.writeText(url).then(() => {
-                    const fb = document.getElementById('copy-link-feedback');
-                    fb.textContent = 'Link Copied!';
-                    setTimeout(() => fb.textContent = '', 3000);
-                }).catch(() => {
-                     // Fallback
-                    const fb = document.getElementById('copy-link-feedback');
-                    fb.textContent = 'Please copy URL manually from bar.';
-                    fb.classList.replace('text-green-400', 'text-red-400');
-                });
-            });
-        }
-
-        // --- 3. STICKY HEADER & COUNT ---
-        const header = document.getElementById('app-header');
-        window.addEventListener('scroll', () => {
-            header.classList.toggle('scrolled', window.scrollY > 20);
-        });
-        
-        let count = localStorage.getItem('visitorCountLCBA96') || 0;
-        count = parseInt(count) + 1;
-        localStorage.setItem('visitorCountLCBA96', count);
-        document.getElementById('visitor-count').textContent = count;
-
-        // --- 4. APP LOGIC ---
-        const imageUploadBtn = document.getElementById('image-upload-btn');
-        const fileNameDisplay = document.getElementById('file-name');
-        const userNameInput = document.getElementById('user-name-input');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const canvasPlaceholder = document.getElementById('canvas-placeholder');
-        const previewLoader = document.getElementById('preview-loader');
-        const downloadBtn = document.getElementById('download-btn');
-        const downloadError = document.getElementById('download-error');
-        const copyCaptionBtn = document.getElementById('copy-caption-btn');
-        const copyCaptionFeedback = document.getElementById('copy-caption-feedback');
-        const zoomSlider = document.getElementById('zoom-slider');
-
-        let userImage = null; // Image Object
-        let userName = ''; // User's name
-        
-        // Transform State
+        // --- 1. CONFIGURATION & STATE ---
+        const CANVAS_SIZE = 1080;
         let state = {
+            page: 1,
             scale: 1,
             offsetX: 0,
             offsetY: 0,
             isDragging: false,
             lastX: 0,
             lastY: 0,
-            pinchDist: null
+            pinchDist: null,
+            userName: '',
+            userImage: null
         };
 
+        // --- 2. ASSETS ---
         const frameImage = new Image();
         frameImage.crossOrigin = "Anonymous";
-        const CANVAS_SIZE = 1080;
-
-        function initCanvas() {
-            canvas.width = CANVAS_SIZE;
-            canvas.height = CANVAS_SIZE;
-        }
-        initCanvas();
-
-        // Auto-load frame on initialization
         frameImage.src = 'LCBA-96th_frame.png';
-        frameImage.onload = () => {
-            // Show canvas with frame immediately (even without user photo)
-            canvas.classList.remove('hidden');
-            canvasPlaceholder.classList.add('hidden');
-            draw();
-        };
 
-        function draw() {
-            // 1. Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // --- 3. DOM ELEMENTS ---
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const nameInput = document.getElementById('user-name');
+        const captionPreview = document.getElementById('caption-preview');
+        const fileInput = document.getElementById('image-upload');
+        const zoomSlider = document.getElementById('zoom-slider');
+        const downloadBtn = document.getElementById('download-btn');
+
+        // --- 4. INITIALIZATION ---
+        window.addEventListener('load', () => {
+            // Check Browser Blocker
+            if (window.isBlockedBrowser) {
+                document.getElementById('browser-blocker').classList.remove('hidden');
+                document.getElementById('browser-blocker').classList.add('force-visible');
+                document.getElementById('loading-screen').classList.add('hidden');
+            } else {
+                // Initialize App
+                canvas.width = CANVAS_SIZE;
+                canvas.height = CANVAS_SIZE;
+                
+                // Load visitor count
+                let count = localStorage.getItem('visitorCountLCBA96') || 0;
+                count = parseInt(count) + 1;
+                localStorage.setItem('visitorCountLCBA96', count);
+                document.getElementById('visitor-count').textContent = count;
+
+                // Frame Loaded?
+                frameImage.onload = () => {
+                    draw();
+                    // Hide Loader
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('loading-screen').classList.add('hidden');
+                            document.getElementById('main-content').classList.add('loaded');
+                        }, 500);
+                    }, 800);
+                };
+            }
+            lucide.createIcons();
+        });
+
+        // --- 5. NAVIGATION LOGIC ---
+        window.goToStep = function(step) {
+            // Validation
+            if (step === 2 && nameInput.value.trim() === '') {
+                nameInput.classList.add('ring-2', 'ring-red-500');
+                setTimeout(() => nameInput.classList.remove('ring-2', 'ring-red-500'), 500);
+                return;
+            }
+
+            // Update UI
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${step}`).classList.add('active');
             
-            // 2. Draw User Photo first (background layer) - only if uploaded
-            if (userImage) {
-                ctx.save();
-                // Move to center
-                ctx.translate(canvas.width/2, canvas.height/2);
-                ctx.translate(state.offsetX, state.offsetY);
-                ctx.scale(state.scale, state.scale);
-                // Draw centered
-                ctx.drawImage(userImage, -userImage.width/2, -userImage.height/2);
-                ctx.restore();
-            }
-
-            // 3. Always draw Frame overlay on top (foreground layer)
-            // The frame image should have transparent areas where the photo shows through
-            // Frame should always be visible, even when no photo is uploaded
-            if (frameImage.complete && frameImage.src) {
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
-            }
-        }
-
-        // Name Input Handler with Caption Preview
-        userNameInput.addEventListener('input', (e) => {
-            userName = e.target.value.trim();
-            updateCaptionPreview();
-        });
-
-        // Update Caption Preview
-        function updateCaptionPreview() {
-            const captionPreview = document.getElementById('caption-preview');
-            if (userName && userName.trim() !== '') {
-                const caption = generateCaption(userName);
-                captionPreview.textContent = caption;
-                captionPreview.classList.remove('text-gray-500', 'italic');
-            } else {
-                captionPreview.innerHTML = '<span class="text-gray-500 italic">Enter your name to see preview...</span>';
-                captionPreview.classList.add('text-gray-500', 'italic');
-            }
-        }
-
-        // Card Navigation
-        let currentPage = 0;
-        const cardPages = document.querySelectorAll('.card-page');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const pageIndicators = document.querySelectorAll('.page-indicator');
-
-        function showPage(pageIndex) {
-            cardPages.forEach((page, index) => {
-                if (index === pageIndex) {
-                    page.classList.add('active');
-                    page.classList.remove('hidden');
+            // Update Indicators
+            for(let i=1; i<=3; i++) {
+                const ind = document.getElementById(`step-ind-${i}`);
+                if (i === step) {
+                    ind.className = "w-10 h-10 rounded-full bg-gold text-deepBlue font-bold flex items-center justify-center shadow-[0_0_15px_rgba(251,191,36,0.5)] transition-all";
+                } else if (i < step) {
+                    ind.className = "w-10 h-10 rounded-full bg-blue-900 text-gold font-bold flex items-center justify-center border border-gold/50 transition-all";
+                    ind.innerHTML = "✓";
                 } else {
-                    page.classList.remove('active');
-                    page.classList.add('hidden');
+                    ind.className = "w-10 h-10 rounded-full bg-slate-700 text-gray-400 font-bold flex items-center justify-center border border-white/10 transition-all";
+                    ind.innerHTML = i;
                 }
-            });
-
-            // Update indicators
-            pageIndicators.forEach((indicator, index) => {
-                if (index === pageIndex) {
-                    indicator.classList.add('active');
-                } else {
-                    indicator.classList.remove('active');
-                }
-            });
-
-            // Update navigation arrows
-            if (pageIndex === 0) {
-                prevBtn.style.opacity = '0';
-                prevBtn.style.pointerEvents = 'none';
-            } else {
-                prevBtn.style.opacity = '1';
-                prevBtn.style.pointerEvents = 'auto';
             }
-
-            if (pageIndex === cardPages.length - 1) {
-                nextBtn.style.opacity = '0';
-                nextBtn.style.pointerEvents = 'none';
-            } else {
-                nextBtn.style.opacity = '1';
-                nextBtn.style.pointerEvents = 'auto';
-            }
-
-            currentPage = pageIndex;
-            
-            // Refresh icons after page change
-            setTimeout(() => lucide.createIcons(), 100);
+            state.page = step;
         }
 
-        prevBtn.addEventListener('click', () => {
-            if (currentPage > 0) {
-                showPage(currentPage - 1);
+        // --- 6. CORE LOGIC ---
+
+        // A. Caption Generation (BUG FIX HERE)
+        // Removed Unicode converter to fix Korean text issue.
+        function generateCaption(name) {
+            const safeName = name.trim() || "[NAME]";
+            // We use simple markers around the name or standard text to ensure compatibility
+            return `𝟗𝟔 𝐘𝐞𝐚𝐫𝐬. 𝐓𝐡𝐨𝐮𝐬𝐚𝐧𝐝𝐬 𝐨𝐟 𝐀𝐜𝐜𝐨𝐦𝐩𝐥𝐢𝐬𝐡𝐞𝐝 𝐋𝐞𝐚𝐝𝐞𝐫𝐬. 𝐎𝐧𝐞 𝐋𝐂𝐁𝐀.\n\nI am ${safeName}. I am an 𝐋𝐂𝐁𝐀𝐢𝐚𝐧, and I am part of the legacy. Celebrating nearly a century of transforming lives and expanding opportunities. Spanning 9 decades of academic leadership, our commitment to excellence remains the people's trust; a history proven by the thousands of graduates who continue to lead in their chosen fields.\n\n𝐎𝐮𝐫 𝐜𝐨𝐧𝐭𝐢𝐧𝐮𝐞𝐝 𝐬𝐮𝐜𝐜𝐞𝐬𝐬 𝐢𝐬 𝐫𝐨𝐨𝐭𝐞𝐝 𝐢𝐧 𝐨𝐮𝐫 𝐜𝐨𝐫𝐞 𝐯𝐚𝐥𝐮𝐞𝐬: 𝐏𝐨𝐬𝐢𝐭𝐢𝐯𝐢𝐭𝐲 that fuels our growth, 𝐈𝐧𝐭𝐞𝐠𝐫𝐢𝐭𝐲 that defines our character, 𝐌𝐢𝐧𝐝𝐟𝐮𝐥𝐧𝐞𝐬𝐬 in our actions, and 𝐄𝐱𝐜𝐞𝐥𝐥𝐞𝐧𝐜𝐞 in our impact. These values are the reason why an 𝐋𝐂𝐁𝐀 education remains a lifelong advantage.\n\n𝐈 𝐚𝐦 𝐩𝐫𝐨𝐮𝐝 𝐭𝐨 𝐜𝐚𝐫𝐫𝐲 𝐭𝐡𝐢𝐬 𝐥𝐞𝐠𝐚𝐜𝐲 𝐚𝐬 𝐰𝐞 𝐜𝐞𝐥𝐞𝐛𝐫𝐚𝐭𝐞 𝐨𝐮𝐫 𝟗𝟔𝐭𝐡 𝐅𝐨𝐮𝐧𝐝𝐢𝐧𝐠 𝐀𝐧𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐫𝐲.\n\n𝑳𝒂𝒌𝒊𝒏𝒈 𝑳𝑪𝑩𝑨. 𝑵𝒐𝒐𝒏 𝒂𝒕 𝑵𝒈𝒂𝒚𝒐𝒏. #LCBA96`;
+        }
+
+        nameInput.addEventListener('input', (e) => {
+            state.userName = e.target.value;
+            if (state.userName) {
+                captionPreview.innerText = generateCaption(state.userName);
+                captionPreview.classList.remove('italic', 'text-gray-500');
+                captionPreview.classList.add('text-white');
+            } else {
+                captionPreview.innerText = "Start typing your name above to see the magic happen...";
+                captionPreview.classList.add('italic', 'text-gray-500');
             }
         });
 
-        nextBtn.addEventListener('click', () => {
-            if (currentPage < cardPages.length - 1) {
-                showPage(currentPage + 1);
-            }
-        });
-
-        // Initialize first page
-        showPage(0);
-
-        // Image Upload
-        imageUploadBtn.addEventListener('change', (e) => {
+        // B. Image Handling
+        fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            fileNameDisplay.textContent = "Selected: " + (file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name);
-            fileNameDisplay.classList.remove('text-gray-400');
-            fileNameDisplay.classList.add('text-green-400');
 
             const reader = new FileReader();
             reader.onload = (event) => {
                 const img = new Image();
                 img.onload = () => {
-                    userImage = img;
-                    
-                    // Reset Transforms to 'Cover' style
-                    // We want image to cover the 1080x1080 square
+                    state.userImage = img;
+                    // Reset Transforms to "Cover"
                     const scaleW = CANVAS_SIZE / img.width;
                     const scaleH = CANVAS_SIZE / img.height;
                     state.scale = Math.max(scaleW, scaleH);
                     state.offsetX = 0;
                     state.offsetY = 0;
                     
+                    // Update UI Controls
                     zoomSlider.value = state.scale;
-                    zoomSlider.min = state.scale * 0.1; // Dynamic range
+                    zoomSlider.min = state.scale * 0.1;
                     zoomSlider.max = state.scale * 3;
                     
-                    checkVisibility();
                     draw();
-                    
-                    // Auto-advance to next page after photo upload
-                    setTimeout(() => {
-                        showPage(2); // Go to Step 3 (Adjust & Download)
-                    }, 500);
+                    goToStep(3);
                 };
                 img.src = event.target.result;
             };
             reader.readAsDataURL(file);
         });
 
-        function checkVisibility() {
-            // Canvas is already visible when frame loads
-            // Only enable download when user image is uploaded
-            if (userImage && frameImage.complete && frameImage.src) {
-                downloadBtn.disabled = false;
+        // C. Canvas Draw
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 1. Draw User Image
+            if (state.userImage) {
+                ctx.save();
+                ctx.translate(canvas.width/2, canvas.height/2);
+                ctx.translate(state.offsetX, state.offsetY);
+                ctx.scale(state.scale, state.scale);
+                ctx.drawImage(state.userImage, -state.userImage.width/2, -state.userImage.height/2);
+                ctx.restore();
             } else {
-                downloadBtn.disabled = true;
+                // Placeholder background
+                ctx.fillStyle = "#0f172a";
+                ctx.fillRect(0,0, canvas.width, canvas.height);
+            }
+
+            // 2. Draw Frame
+            if (frameImage.complete) {
+                ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
             }
         }
 
-        // Generate Caption
-        function generateCaption(name) {
-            const template = '𝟗𝟔 𝐘𝐞𝐚𝐫𝐬. 𝐓𝐡𝐨𝐮𝐬𝐚𝐧𝐝𝐬 𝐨𝐟 𝐀𝐜𝐜𝐨𝐦𝐩𝐥𝐢𝐬𝐡𝐞𝐝 𝐋𝐞𝐚𝐝𝐞𝐫𝐬. 𝐎𝐧𝐞 𝐋𝐂𝐁𝐀. I am [NAME]. I am an 𝐋𝐂𝐁𝐀𝐢𝐚𝐧, and I am part of the legacy. Celebrating nearly a century of transforming lives and expanding opportunities. Spanning 9 decades of academic leadership, our commitment to excellence remains the people\'s trust; a history proven by the thousands of graduates who continue to lead in their chosen fields. 𝐎𝐮𝐫 𝐜𝐨𝐧𝐭𝐢𝐧𝐮𝐞𝐝 𝐬𝐮𝐜𝐜𝐞𝐬𝐬 𝐢𝐬 𝐫𝐨𝐨𝐭𝐞𝐝 𝐢𝐧 𝐨𝐮𝐫 𝐜𝐨𝐫𝐞 𝐯𝐚𝐥𝐮𝐞𝐬: 𝐏𝐨𝐬𝐢𝐭𝐢𝐯𝐢𝐭𝐲 that fuels our growth, 𝐈𝐧𝐭𝐞𝐠𝐫𝐢𝐭𝐲 that defines our character, 𝐌𝐢𝐧𝐝𝐟𝐮𝐥𝐧𝐞𝐬𝐬 in our actions, and 𝐄𝐱𝐜𝐞𝐥𝐥𝐞𝐧𝐜𝐞 in our impact. These values are the reason why an 𝐋𝐂𝐁𝐀 education remains a lifelong advantage. 𝐈 𝐚𝐦 𝐩𝐫𝐨𝐮𝐝 𝐭𝐨 𝐜𝐚𝐫𝐫𝐲 𝐭𝐡𝐢𝐬 𝐥𝐞𝐠𝐚𝐜𝐲 𝐚𝐬 𝐰𝐞 𝐜𝐞𝐥𝐞𝐛𝐫𝐚𝐭𝐞 𝐨𝐮𝐫 𝟗𝟔𝐭𝐡 𝐅𝐨𝐮𝐧𝐝𝐢𝐧𝐠 𝐀𝐧𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐫𝐲. 𝑳𝒂𝒌𝒊𝒏𝒈 𝑳𝑪𝑩𝑨. 𝑵𝒐𝒐𝒏 𝒂𝒕 𝑵𝒈𝒂𝒚𝒐𝒏';
-            
-            if (!name || name.trim() === '') {
-                return template.replace('[NAME]', '[NAME]');
-            }
-            
-            // Convert name to bold Unicode (Mathematical Bold)
-            // Keep Korean, Chinese, Japanese, and other non-Latin characters as-is
-            const boldName = name.split('').map(char => {
-                const code = char.charCodeAt(0);
-                // Korean characters: Hangul Syllables (0xAC00-0xD7A3) and Hangul Jamo (0x1100-0x11FF, 0x3130-0x318F)
-                // Chinese/Japanese: CJK Unified Ideographs (0x4E00-0x9FFF)
-                if ((code >= 0xAC00 && code <= 0xD7A3) || 
-                    (code >= 0x1100 && code <= 0x11FF) || 
-                    (code >= 0x3130 && code <= 0x318F) ||
-                    (code >= 0x4E00 && code <= 0x9FFF)) {
-                    return char; // Keep Korean/Chinese/Japanese as-is
-                }
-                if (code >= 65 && code <= 90) { // A-Z
-                    return String.fromCharCode(0x1D400 + (code - 65));
-                } else if (code >= 97 && code <= 122) { // a-z
-                    return String.fromCharCode(0x1D41A + (code - 97));
-                } else if (code >= 48 && code <= 57) { // 0-9
-                    return String.fromCharCode(0x1D7CE + (code - 48));
-                }
-                return char; // Keep spaces and special characters as-is
-            }).join('');
-            
-            return template.replace('[NAME]', boldName);
-        }
-
-        // --- INTERACTION HANDLERS (Move/Pinch/Scroll) ---
+        // --- 7. INTERACTION HANDLERS (PAN & ZOOM) ---
         
-        // Helper: Mouse/Touch Coordinates mapped to canvas size? 
-        // Actually for panning we just need relative delta movements in screen pixels 
-        // then scaled slightly to match canvas feel.
-
-        // Mouse Events
+        // Mouse
         canvas.addEventListener('mousedown', (e) => {
-            if(!userImage) return;
+            if(!state.userImage) return;
             state.isDragging = true;
             state.lastX = e.clientX;
             state.lastY = e.clientY;
@@ -841,14 +499,12 @@
             const dx = e.clientX - state.lastX;
             const dy = e.clientY - state.lastY;
             
-            // Movement speed multiplier (since canvas is 1080px but displayed smaller)
-            // We approximate scale factor to make dragging feel 1:1 with finger
+            // Adjust sensitivity based on display size vs canvas size
             const rect = canvas.getBoundingClientRect();
-            const displayRatio = canvas.width / rect.width;
+            const ratio = canvas.width / rect.width;
             
-            state.offsetX += dx * displayRatio;
-            state.offsetY += dy * displayRatio;
-            
+            state.offsetX += dx * ratio;
+            state.offsetY += dy * ratio;
             state.lastX = e.clientX;
             state.lastY = e.clientY;
             draw();
@@ -859,20 +515,9 @@
             canvas.style.cursor = 'move';
         });
 
-        // Wheel Zoom
-        canvas.addEventListener('wheel', (e) => {
-            if(!userImage) return;
-            e.preventDefault();
-            const zoomSpeed = 0.001;
-            const newScale = state.scale - (e.deltaY * zoomSpeed * state.scale);
-            state.scale = Math.max(0.1, Math.min(newScale, 10)); // Clamp limits
-            zoomSlider.value = state.scale;
-            draw();
-        }, { passive: false });
-
-        // Touch Events (Pinch & Pan)
+        // Touch
         canvas.addEventListener('touchstart', (e) => {
-            if(!userImage) return;
+            if(!state.userImage) return;
             if (e.touches.length === 1) {
                 state.isDragging = true;
                 state.lastX = e.touches[0].clientX;
@@ -888,19 +533,17 @@
         }, { passive: false });
 
         canvas.addEventListener('touchmove', (e) => {
-            if(!userImage) return;
-            e.preventDefault(); // Prevent page scrolling
+            if(!state.userImage) return;
+            e.preventDefault();
 
             if (e.touches.length === 1 && state.isDragging) {
                 const dx = e.touches[0].clientX - state.lastX;
                 const dy = e.touches[0].clientY - state.lastY;
-                
                 const rect = canvas.getBoundingClientRect();
-                const displayRatio = canvas.width / rect.width;
+                const ratio = canvas.width / rect.width;
 
-                state.offsetX += dx * displayRatio;
-                state.offsetY += dy * displayRatio;
-                
+                state.offsetX += dx * ratio;
+                state.offsetY += dy * ratio;
                 state.lastX = e.touches[0].clientX;
                 state.lastY = e.touches[0].clientY;
                 draw();
@@ -909,8 +552,7 @@
                     e.touches[0].clientX - e.touches[1].clientX,
                     e.touches[0].clientY - e.touches[1].clientY
                 );
-                const zoomFactor = dist / state.pinchDist;
-                state.scale = state.lastScale * zoomFactor;
+                state.scale = state.lastScale * (dist / state.pinchDist);
                 zoomSlider.value = state.scale;
                 draw();
             }
@@ -921,53 +563,59 @@
             state.pinchDist = null;
         });
 
-        // Slider Control
+        // Slider
         zoomSlider.addEventListener('input', (e) => {
             state.scale = parseFloat(e.target.value);
             draw();
         });
-        document.getElementById('zoom-in-btn').addEventListener('click', () => {
-            state.scale *= 1.1; zoomSlider.value = state.scale; draw();
-        });
-        document.getElementById('zoom-out-btn').addEventListener('click', () => {
-            state.scale *= 0.9; zoomSlider.value = state.scale; draw();
-        });
 
+        // --- 8. ACTIONS ---
+        
         // Download
         downloadBtn.addEventListener('click', () => {
-            if (downloadBtn.disabled) return;
+            if (!state.userImage) return;
             
             const link = document.createElement('a');
-            link.download = 'LCBA_96th_Anniversary.png';
-            link.href = canvas.toDataURL("image/png");
+            link.download = `LCBA_96th_${state.userName.replace(/\s+/g, '_') || 'Anniversary'}.png`;
+            link.href = canvas.toDataURL("image/png", 0.9); // High quality
             link.click();
             
-            // Enable copy caption button after download
-            if (userName) {
-                copyCaptionBtn.disabled = false;
-            }
+            // Show Success Feedback on button
+            const originalContent = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i> Saved!`;
+            downloadBtn.classList.remove('from-gold', 'to-goldDark');
+            downloadBtn.classList.add('bg-green-600');
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalContent;
+                downloadBtn.classList.add('from-gold', 'to-goldDark');
+                downloadBtn.classList.remove('bg-green-600');
+                lucide.createIcons();
+            }, 2000);
         });
 
         // Copy Caption
-        copyCaptionBtn.addEventListener('click', () => {
-            if (copyCaptionBtn.disabled) return;
-            
-            const nameToUse = userName || '[NAME]';
-            const caption = generateCaption(nameToUse);
-            navigator.clipboard.writeText(caption).then(() => {
-                copyCaptionFeedback.textContent = 'Caption Copied!';
-                copyCaptionFeedback.classList.remove('text-red-400');
-                copyCaptionFeedback.classList.add('text-green-400');
+        document.getElementById('copy-caption-btn').addEventListener('click', () => {
+            const txt = generateCaption(state.userName);
+            navigator.clipboard.writeText(txt).then(() => {
+                const btn = document.getElementById('copy-caption-btn');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="check" class="w-5 h-5"></i> Copied!`;
+                btn.classList.replace('bg-royalBlue', 'bg-green-600');
+                lucide.createIcons();
                 setTimeout(() => {
-                    copyCaptionFeedback.textContent = '';
-                }, 3000);
-            }).catch(() => {
-                copyCaptionFeedback.textContent = 'Failed to copy. Please select and copy manually.';
-                copyCaptionFeedback.classList.remove('text-green-400');
-                copyCaptionFeedback.classList.add('text-red-400');
-                setTimeout(() => {
-                    copyCaptionFeedback.textContent = '';
-                }, 3000);
+                    btn.innerHTML = originalHtml;
+                    btn.classList.replace('bg-green-600', 'bg-royalBlue');
+                    lucide.createIcons();
+                }, 2000);
+            });
+        });
+
+        // Copy Browser Link
+        document.getElementById('copy-link-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                document.getElementById('copy-feedback').innerText = "Link copied! Open Chrome/Safari and paste.";
             });
         });
 
