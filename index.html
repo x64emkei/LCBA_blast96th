@@ -58,8 +58,98 @@
         .force-hidden { display: none !important; }
         .force-visible { display: flex !important; }
 
-        #main-content { display: block; }
+        #main-content { display: none; opacity: 0; }
+        #main-content.loaded { display: block; animation: fadeIn 0.5s ease-in forwards; }
         #browser-blocker { display: none; }
+        
+        /* Loading Screen Styles */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: #002147;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .loading-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #loading-seal {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: sealFadeZoom 1s ease-out forwards;
+        }
+        
+        #loading-logo {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            object-fit: contain;
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        
+        /* Loading Animations */
+        @keyframes sealFadeZoom {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes sealSlideLeft {
+            0% {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-100%) scale(0.8);
+                opacity: 0.3;
+            }
+        }
+        
+        @keyframes logoSlideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
         
         /* Cursor for moving */
         .cursor-move-all { cursor: move; cursor: -webkit-grabbing; }
@@ -118,6 +208,14 @@
     </script>
 </head>
 <body class="text-gray-100">
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="loading-container">
+            <img id="loading-seal" src="LCBA_Seal.png" alt="LCBA Seal" />
+            <img id="loading-logo" src="96th_logo.png" alt="96th Anniversary Logo" />
+        </div>
+    </div>
 
     <!-- STRICT BROWSER BLOCKER -->
     <div id="browser-blocker" class="hidden fixed inset-0 z-[9999] flex-col justify-center items-center bg-gray-900 p-4 text-center overflow-y-auto">
@@ -180,7 +278,7 @@
         <div class="container mx-auto px-4 py-8" style="padding-top: 150px;"> 
             
             <div class="text-center mb-10 flex flex-col items-center justify-center">
-                <img src="96th.2.png" alt="96 Years of Excellence" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-6">
+                <img src="96th_logo.png" alt="96 Years of Excellence" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-6">
                 <h2 class="text-3xl md:text-5xl font-serif font-bold text-lcbaGold mb-3 tracking-wide">96 Years of Excellence</h2>
                 <p class="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto">Create your anniversary profile picture!</p>
             </div>
@@ -190,21 +288,8 @@
                     
                     <!-- STEP 1 -->
                     <div class="bg-black/20 p-4 rounded-xl border border-white/10">
-                        <h3 class="text-lg font-bold text-lcbaGold mb-3 no-select uppercase tracking-wide">Step 1: Choose Frame Style</h3>
-                        <div class="grid grid-cols-2 gap-6">
-                            <button class="frame-btn group" data-frame-src="frame1.png">
-                                <div class="rounded-2xl border-4 border-transparent custom-transition bg-white/10 p-4 text-center aspect-square flex flex-col items-center justify-center hover:bg-white/20">
-                                    <div class="w-16 h-16 rounded-full border-4 border-lcbaGold mb-3 flex items-center justify-center text-lcbaGold text-2xl font-serif font-bold bg-lcbaBlue shadow-lg">A</div>
-                                    <span class="text-sm md:text-base font-bold text-white uppercase tracking-wider">Style A</span>
-                                </div>
-                            </button>
-                            <button class="frame-btn group" data-frame-src="frame2.png">
-                                <div class="rounded-2xl border-4 border-transparent custom-transition bg-white/10 p-4 text-center aspect-square flex flex-col items-center justify-center hover:bg-white/20">
-                                    <div class="w-16 h-16 rounded-full border-4 border-lcbaGold mb-3 flex items-center justify-center text-lcbaGold text-2xl font-serif font-bold bg-lcbaBlue shadow-lg">B</div>
-                                    <span class="text-sm md:text-base font-bold text-white uppercase tracking-wider">Style B</span>
-                                </div>
-                            </button>
-                        </div>
+                        <label class="block text-lg font-bold text-lcbaGold mb-3 no-select uppercase tracking-wide">Step 1: Enter Your Name</label>
+                        <input type="text" id="user-name-input" placeholder="Enter your full name" class="w-full bg-lcbaBlue border-2 border-lcbaGold text-white font-semibold py-4 px-6 rounded-xl focus:outline-none focus:ring-2 focus:ring-lcbaGold focus:border-transparent placeholder-gray-400 uppercase tracking-wide">
                     </div>
 
                     <!-- STEP 2 -->
@@ -257,12 +342,18 @@
                         </div>
                     </div>
 
-                    <div class="pt-4 border-t border-white/10">
+                    <div class="pt-4 border-t border-white/10 space-y-4">
                         <button id="download-btn" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-white text-xl font-bold py-5 px-6 rounded-xl hover:from-white hover:to-gray-200 hover:text-lcbaBlue custom-transition shadow-xl disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed uppercase tracking-widest transform active:scale-95 flex items-center justify-center gap-3" disabled>
                             <i data-lucide="download" class="w-6 h-6"></i>
                             Download Image
                         </button>
-                        <p id="download-error" class="text-base text-red-400 text-center mt-2 min-h-[1.5rem]"></p>
+                        <p id="download-error" class="text-base text-red-400 text-center min-h-[1.5rem]"></p>
+                        
+                        <button id="copy-caption-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xl font-bold py-5 px-6 rounded-xl hover:from-blue-400 hover:to-blue-500 custom-transition shadow-xl disabled:from-gray-700 disabled:to-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed uppercase tracking-widest transform active:scale-95 flex items-center justify-center gap-3" disabled>
+                            <i data-lucide="copy" class="w-6 h-6"></i>
+                            Copy Caption
+                        </button>
+                        <p id="copy-caption-feedback" class="text-base text-green-400 text-center min-h-[1.5rem]"></p>
                     </div>
                 </div>
             </main>
@@ -297,10 +388,40 @@
     </div>
 
     <script>
-        // --- 1. INITIALIZATION & ICONS ---
+        // --- 1. LOADING SCREEN ANIMATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            window.showWarningIfNeeded(); 
+            // Check for in-app browser first
+            window.showWarningIfNeeded();
+            
+            // Only show loading screen if not in blocked browser
+            const browserBlocker = document.getElementById('browser-blocker');
+            if (!browserBlocker.classList.contains('force-visible')) {
+                const loadingScreen = document.getElementById('loading-screen');
+                const loadingSeal = document.getElementById('loading-seal');
+                const loadingLogo = document.getElementById('loading-logo');
+                const mainContent = document.getElementById('main-content');
+                
+                // Phase 1: Seal fades in and zooms (0-1s) - already in CSS
+                // Phase 2: Seal slides left (1-1.5s)
+                setTimeout(() => {
+                    loadingSeal.style.animation = 'sealSlideLeft 0.5s ease-in-out forwards';
+                }, 1000);
+                
+                // Phase 3: Logo slides in (1.5-2.5s)
+                setTimeout(() => {
+                    loadingLogo.style.animation = 'logoSlideIn 1s ease-out forwards';
+                }, 1500);
+                
+                // Phase 4: Loading screen fades out, main content fades in (2.5-3s)
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    mainContent.classList.add('loaded');
+                    lucide.createIcons();
+                }, 3000);
+            } else {
+                // If browser blocked, just initialize icons
+                lucide.createIcons();
+            }
         });
 
         // --- 2. BROWSER BLOCKER COPY LINK ---
@@ -333,19 +454,21 @@
         document.getElementById('visitor-count').textContent = count;
 
         // --- 4. APP LOGIC ---
-        const frameButtons = document.querySelectorAll('.frame-btn');
         const imageUploadBtn = document.getElementById('image-upload-btn');
         const fileNameDisplay = document.getElementById('file-name');
+        const userNameInput = document.getElementById('user-name-input');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const canvasPlaceholder = document.getElementById('canvas-placeholder');
         const previewLoader = document.getElementById('preview-loader');
         const downloadBtn = document.getElementById('download-btn');
         const downloadError = document.getElementById('download-error');
+        const copyCaptionBtn = document.getElementById('copy-caption-btn');
+        const copyCaptionFeedback = document.getElementById('copy-caption-feedback');
         const zoomSlider = document.getElementById('zoom-slider');
 
-        let selectedFrameSrc = null;
         let userImage = null; // Image Object
+        let userName = ''; // User's name
         
         // Transform State
         let state = {
@@ -368,11 +491,17 @@
         }
         initCanvas();
 
+        // Auto-load frame on initialization
+        frameImage.src = 'LCBA-96th_frame.png';
+        frameImage.onload = () => {
+            draw();
+        };
+
         function draw() {
-            // 1. Clear
+            // 1. Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // 2. Draw User Image (with transforms)
+            // 2. Draw User Photo first (background layer)
             if (userImage) {
                 ctx.save();
                 // Move to center
@@ -384,31 +513,17 @@
                 ctx.restore();
             }
 
-            // 3. Draw Frame (static on top)
+            // 3. Draw Frame overlay on top (foreground layer)
+            // The frame image should have transparent areas where the photo shows through
             if (frameImage.complete && frameImage.src) {
+                ctx.globalCompositeOperation = 'source-over';
                 ctx.drawImage(frameImage, 0, 0, canvas.width, canvas.height);
             }
         }
 
-        // Frame Selection
-        frameButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                frameButtons.forEach(btn => {
-                    btn.firstElementChild.classList.remove('frame-selected', 'bg-white/20');
-                });
-                button.firstElementChild.classList.add('frame-selected', 'bg-white/20');
-                
-                selectedFrameSrc = button.dataset.frameSrc;
-                frameImage.src = selectedFrameSrc;
-                
-                // Show loader if image is being fetched
-                previewLoader.style.display = 'block';
-                frameImage.onload = () => {
-                    previewLoader.style.display = 'none';
-                    checkVisibility();
-                    draw();
-                };
-            });
+        // Name Input Handler
+        userNameInput.addEventListener('input', (e) => {
+            userName = e.target.value.trim();
         });
 
         // Image Upload
@@ -445,11 +560,35 @@
         });
 
         function checkVisibility() {
-            if (selectedFrameSrc && userImage) {
+            if (userImage && frameImage.complete && frameImage.src) {
                 canvas.classList.remove('hidden');
                 canvasPlaceholder.classList.add('hidden');
                 downloadBtn.disabled = false;
             }
+        }
+
+        // Generate Caption
+        function generateCaption(name) {
+            const template = '𝟗𝟔 𝐘𝐞𝐚𝐫𝐬. 𝐓𝐡𝐨𝐮𝐬𝐚𝐧𝐝𝐬 𝐨𝐟 𝐀𝐜𝐜𝐨𝐦𝐩𝐥𝐢𝐬𝐡𝐞𝐝 𝐋𝐞𝐚𝐝𝐞𝐫𝐬. 𝐎𝐧𝐞 𝐋𝐂𝐁𝐀. I am [NAME]. I am an 𝐋𝐂𝐁𝐀𝐢𝐚𝐧, and I am part of the legacy. Celebrating nearly a century of transforming lives and expanding opportunities. Spanning 9 decades of academic leadership, our commitment to excellence remains the people\'s trust; a history proven by the thousands of graduates who continue to lead in their chosen fields. 𝐎𝐮𝐫 𝐜𝐨𝐧𝐭𝐢𝐧𝐮𝐞𝐝 𝐬𝐮𝐜𝐜𝐞𝐬𝐬 𝐢𝐬 𝐫𝐨𝐨𝐭𝐞𝐝 𝐢𝐧 𝐨𝐮𝐫 𝐜𝐨𝐫𝐞 𝐯𝐚𝐥𝐮𝐞𝐬: 𝐏𝐨𝐬𝐢𝐭𝐢𝐯𝐢𝐭𝐲 that fuels our growth, 𝐈𝐧𝐭𝐞𝐠𝐫𝐢𝐭𝐲 that defines our character, 𝐌𝐢𝐧𝐝𝐟𝐮𝐥𝐧𝐞𝐬𝐬 in our actions, and 𝐄𝐱𝐜𝐞𝐥𝐥𝐞𝐧𝐜𝐞 in our impact. These values are the reason why an 𝐋𝐂𝐁𝐀 education remains a lifelong advantage. 𝐈 𝐚𝐦 𝐩𝐫𝐨𝐮𝐝 𝐭𝐨 𝐜𝐚𝐫𝐫𝐲 𝐭𝐡𝐢𝐬 𝐥𝐞𝐠𝐚𝐜𝐲 𝐚𝐬 𝐰𝐞 𝐜𝐞𝐥𝐞𝐛𝐫𝐚𝐭𝐞 𝐨𝐮𝐫 𝟗𝟔𝐭𝐡 𝐅𝐨𝐮𝐧𝐝𝐢𝐧𝐠 𝐀𝐧𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐫𝐲. 𝑳𝒂𝒌𝒊𝒏𝒈 𝑳𝑪𝑩𝑨. 𝑵𝒐𝒐𝒏 𝒂𝒕 𝑵𝒈𝒂𝒚𝒐𝒏';
+            
+            if (!name || name.trim() === '') {
+                return template.replace('[NAME]', '[NAME]');
+            }
+            
+            // Convert name to bold Unicode (Mathematical Bold)
+            const boldName = name.split('').map(char => {
+                const code = char.charCodeAt(0);
+                if (code >= 65 && code <= 90) { // A-Z
+                    return String.fromCharCode(0x1D400 + (code - 65));
+                } else if (code >= 97 && code <= 122) { // a-z
+                    return String.fromCharCode(0x1D41A + (code - 97));
+                } else if (code >= 48 && code <= 57) { // 0-9
+                    return String.fromCharCode(0x1D7CE + (code - 48));
+                }
+                return char; // Keep spaces and special characters as-is
+            }).join('');
+            
+            return template.replace('[NAME]', boldName);
         }
 
         // --- INTERACTION HANDLERS (Move/Pinch/Scroll) ---
@@ -573,6 +712,34 @@
             link.download = 'LCBA_96th_Anniversary.png';
             link.href = canvas.toDataURL("image/png");
             link.click();
+            
+            // Enable copy caption button after download
+            if (userName) {
+                copyCaptionBtn.disabled = false;
+            }
+        });
+
+        // Copy Caption
+        copyCaptionBtn.addEventListener('click', () => {
+            if (copyCaptionBtn.disabled) return;
+            
+            const nameToUse = userName || '[NAME]';
+            const caption = generateCaption(nameToUse);
+            navigator.clipboard.writeText(caption).then(() => {
+                copyCaptionFeedback.textContent = 'Caption Copied!';
+                copyCaptionFeedback.classList.remove('text-red-400');
+                copyCaptionFeedback.classList.add('text-green-400');
+                setTimeout(() => {
+                    copyCaptionFeedback.textContent = '';
+                }, 3000);
+            }).catch(() => {
+                copyCaptionFeedback.textContent = 'Failed to copy. Please select and copy manually.';
+                copyCaptionFeedback.classList.remove('text-green-400');
+                copyCaptionFeedback.classList.add('text-red-400');
+                setTimeout(() => {
+                    copyCaptionFeedback.textContent = '';
+                }, 3000);
+            });
         });
 
     </script>
