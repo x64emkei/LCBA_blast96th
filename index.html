@@ -29,8 +29,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #002147;
-            background-image: linear-gradient(to bottom right, #002147, #000a12); 
+            background-color: #ffffff;
             color: white;
             min-height: 100vh;
             overscroll-behavior: none; /* Prevent pull-to-refresh */
@@ -67,7 +66,7 @@
             position: fixed;
             inset: 0;
             z-index: 10000;
-            background: #002147;
+            background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,8 +93,8 @@
             width: 200px;
             height: 200px;
             object-fit: contain;
-            opacity: 1;
-            transform: translateX(0);
+            opacity: 0;
+            transform: translateX(0) translateY(0);
             z-index: 2;
         }
         
@@ -104,31 +103,84 @@
             width: 200px;
             height: 200px;
             object-fit: contain;
-            opacity: 1;
-            transform: translateX(100%);
+            opacity: 0;
+            transform: translateX(0) translateY(80px);
             z-index: 1;
+        }
+
+        #loading-text {
+            position: absolute;
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #D4AF37;
+            opacity: 0;
+            letter-spacing: normal;
+            z-index: 3;
         }
         
         /* Loading Animations */
-        @keyframes sealSlideLeft {
+        @keyframes sealFadeIn {
             0% {
-                transform: translateX(0);
-                opacity: 1;
+                opacity: 0;
+                transform: translateX(0) translateY(0);
             }
             100% {
-                transform: translateX(-100%);
                 opacity: 1;
+                transform: translateX(0) translateY(0);
+            }
+        }
+
+        @keyframes sealSlideLeft {
+            0% {
+                opacity: 1;
+                transform: translateX(0) translateY(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-100%) translateY(0);
+            }
+        }
+
+        @keyframes logoFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateX(0) translateY(80px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) translateY(80px);
             }
         }
         
-        @keyframes logoSlideInFromRight {
+        @keyframes logoSlideRight {
             0% {
-                transform: translateX(100%);
                 opacity: 1;
+                transform: translateX(0) translateY(80px);
             }
             100% {
-                transform: translateX(0);
                 opacity: 1;
+                transform: translateX(100%) translateY(80px);
+            }
+        }
+
+        @keyframes textFadeIn {
+            0% {
+                opacity: 0;
+                letter-spacing: 0px;
+            }
+            100% {
+                opacity: 1;
+                letter-spacing: 0px;
+            }
+        }
+
+        @keyframes textLetterSpacing {
+            0% {
+                letter-spacing: 0px;
+            }
+            100% {
+                letter-spacing: 12px;
             }
         }
         
@@ -220,6 +272,7 @@
         <div class="loading-container">
             <img id="loading-seal" src="LCBA_Seal.png" alt="LCBA Seal" />
             <img id="loading-logo" src="96th_logo.png" alt="96th Anniversary Logo" />
+            <div id="loading-text">𝟗𝟔𝐭𝐡 𝐅𝐨𝐮𝐧𝐝𝐢𝐧𝐠 𝐀𝐧𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐫𝐲</div>
         </div>
     </div>
 
@@ -455,25 +508,42 @@
                 const loadingLogo = document.getElementById('loading-logo');
                 const mainContent = document.getElementById('main-content');
                 
-                // Both logos start at same height, both visible (opacity 1)
-                // Phase 1: Seal is centered (0-1s)
-                // Phase 2: Seal slides left (1-1.5s)
+                const loadingText = document.getElementById('loading-text');
+                
+                // Phase 1: Seal fades in at center (0-1s)
+                loadingSeal.style.animation = 'sealFadeIn 1s ease-out forwards';
+                
+                // Phase 2: Seal slides left off-center (1-1.5s)
                 setTimeout(() => {
                     loadingSeal.style.animation = 'sealSlideLeft 0.5s ease-in-out forwards';
                 }, 1000);
                 
-                // Phase 3: 96th logo slides in from right to center (1-1.5s)
-                // It appears behind the seal, then moves to center after seal moves left
+                // Phase 3: 96th logo fades in beneath (lower y position) (1-1.5s)
                 setTimeout(() => {
-                    loadingLogo.style.animation = 'logoSlideInFromRight 0.5s ease-in-out forwards';
+                    loadingLogo.style.animation = 'logoFadeIn 0.5s ease-out forwards';
                 }, 1000);
                 
-                // Phase 4: Loading screen fades out, main content fades in (2.5-3s)
+                // Phase 4: 96th logo slides right off-center (1.5-2s)
+                setTimeout(() => {
+                    loadingLogo.style.animation = 'logoSlideRight 0.5s ease-in-out forwards';
+                }, 1500);
+                
+                // Phase 5: Text fades in at center (2-2.5s)
+                setTimeout(() => {
+                    loadingText.style.animation = 'textFadeIn 0.5s ease-out forwards';
+                }, 2000);
+                
+                // Phase 6: Text letter spacing expands (2.5-4s)
+                setTimeout(() => {
+                    loadingText.style.animation = 'textLetterSpacing 1.5s ease-out forwards';
+                }, 2500);
+                
+                // Phase 7: Loading screen fades out, main content fades in (4-4.5s)
                 setTimeout(() => {
                     loadingScreen.classList.add('hidden');
                     mainContent.classList.add('loaded');
                     lucide.createIcons();
-                }, 3000);
+                }, 4000);
             } else {
                 // If browser blocked, just initialize icons
                 lucide.createIcons();
@@ -724,8 +794,17 @@
             }
             
             // Convert name to bold Unicode (Mathematical Bold)
+            // Keep Korean, Chinese, Japanese, and other non-Latin characters as-is
             const boldName = name.split('').map(char => {
                 const code = char.charCodeAt(0);
+                // Korean characters: Hangul Syllables (0xAC00-0xD7A3) and Hangul Jamo (0x1100-0x11FF, 0x3130-0x318F)
+                // Chinese/Japanese: CJK Unified Ideographs (0x4E00-0x9FFF)
+                if ((code >= 0xAC00 && code <= 0xD7A3) || 
+                    (code >= 0x1100 && code <= 0x11FF) || 
+                    (code >= 0x3130 && code <= 0x318F) ||
+                    (code >= 0x4E00 && code <= 0x9FFF)) {
+                    return char; // Keep Korean/Chinese/Japanese as-is
+                }
                 if (code >= 65 && code <= 90) { // A-Z
                     return String.fromCharCode(0x1D400 + (code - 65));
                 } else if (code >= 97 && code <= 122) { // a-z
