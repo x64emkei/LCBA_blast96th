@@ -233,11 +233,18 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         #app-header.scrolled { 
-            padding-top: 0.5rem; 
-            padding-bottom: 0.5rem; 
+            padding-top: 0.25rem; 
+            padding-bottom: 0.25rem; 
             background: linear-gradient(135deg, #01579B 0%, #0D47A1 100%) !important;
-            border-bottom: 3px solid #FFC107; 
+            border-bottom: 2px solid #FFC107; 
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 640px) {
+            #app-header.scrolled {
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
         }
         
         /* Header elements scaling */
@@ -262,6 +269,22 @@
         .page-indicator.active {
             background-color: #0D47A1;
             width: 32px;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .card-page {
+                min-height: auto !important;
+            }
+            
+            input[type="text"], input[type="file"] {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+            }
+            
+            button, a {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
         }
         .page-indicator {
             transition: all 0.3s ease;
@@ -345,55 +368,55 @@
 
     <!-- Main Website Content -->
     <div id="main-content">
-        <header id="app-header" class="fixed top-0 left-0 right-0 z-50 p-4 shadow-xl">
-            <div class="container mx-auto flex flex-row justify-center items-center gap-3 md:gap-5">
-                <img id="lcba-seal-header" src="LCBA_Seal.png" alt="LCBA Logo" class="w-12 h-12 md:w-16 md:h-16 shadow-lg shrink-0 object-contain" loading="lazy">
-                <h1 class="text-base md:text-2xl font-display font-bold text-white uppercase tracking-widest text-center whitespace-nowrap"><span class="text-accentYellow">LCBA</span> 96th Anniversary</h1>
-                <div class="h-8 md:h-10 w-px bg-accentYellow/60"></div>
-                <img src="dpblast_logo.png" alt="DPblast" class="dpblast-logo-img h-8 md:h-12 w-auto object-contain shrink-0" loading="lazy">
+        <header id="app-header" class="fixed top-0 left-0 right-0 z-50 p-2 md:p-4 shadow-xl">
+            <div class="container mx-auto flex flex-row justify-center items-center gap-2 md:gap-5 px-2">
+                <img id="lcba-seal-header" src="LCBA_Seal.png" alt="LCBA Logo" class="w-10 h-10 md:w-16 md:h-16 shadow-lg shrink-0 object-contain" loading="lazy">
+                <h1 class="text-xs md:text-2xl font-display font-bold text-white uppercase tracking-wide md:tracking-widest text-center whitespace-nowrap"><span class="text-accentYellow">LCBA</span> <span class="hidden sm:inline">96th Anniversary</span><span class="sm:hidden">96th</span></h1>
+                <div class="h-6 md:h-10 w-px bg-accentYellow/60 hidden sm:block"></div>
+                <img src="dpblast_logo.png" alt="DPblast" class="dpblast-logo-img h-6 md:h-12 w-auto object-contain shrink-0 hidden sm:block" loading="lazy">
             </div>
         </header>
 
-        <div class="container mx-auto px-4 py-8" style="padding-top: 150px;"> 
+        <div class="container mx-auto px-3 md:px-4 py-4 md:py-8" style="padding-top: 100px; padding-top: min(100px, 20vh);"> 
             
-            <div class="text-center mb-10 flex flex-col items-center justify-center">
-                <img src="96th_logo.png" alt="96 Years of Excellence" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-6" loading="lazy">
-                <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-3 tracking-wide drop-shadow-lg">96 Years of Excellence</h2>
-                <p class="text-white/90 text-lg md:text-xl max-w-2xl mx-auto font-light">Create your anniversary profile picture!</p>
+            <div class="text-center mb-6 md:mb-10 flex flex-col items-center justify-center px-2">
+                <img src="96th_logo.png" alt="96 Years of Excellence" class="w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-4 md:mb-6" loading="lazy">
+                <h2 class="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-white mb-2 md:mb-3 tracking-wide drop-shadow-lg px-2">96 Years of Excellence</h2>
+                <p class="text-white/90 text-sm sm:text-lg md:text-xl max-w-2xl mx-auto font-light px-2">Create your anniversary profile picture!</p>
             </div>
 
-            <main class="glass-container max-w-xl mx-auto rounded-3xl shadow-2xl overflow-hidden">
+            <main class="glass-container max-w-xl mx-auto rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden mx-2 md:mx-auto">
                 <!-- Card Navigation Container -->
                 <div class="relative">
-                    <!-- Navigation Arrows -->
-                    <button id="prev-btn" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-primaryBlue hover:bg-primaryBlueDark text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition opacity-0 pointer-events-none font-medium transform hover:scale-110 active:scale-95" style="transition: opacity 0.3s;" title="Previous Step">
-                        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                    <!-- Navigation Arrows - Larger on mobile for better touch targets -->
+                    <button id="prev-btn" class="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 z-10 bg-primaryBlue hover:bg-primaryBlueDark active:bg-primaryBlueDark text-white w-14 h-14 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg transition opacity-0 pointer-events-none font-medium transform active:scale-95 touch-manipulation" style="transition: opacity 0.3s; -webkit-tap-highlight-color: transparent;" title="Previous Step">
+                        <i data-lucide="chevron-left" class="w-7 h-7 md:w-6 md:h-6"></i>
                     </button>
-                    <button id="next-btn" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-primaryBlue hover:bg-primaryBlueDark text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition font-medium transform hover:scale-110 active:scale-95" title="Next Step">
-                        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                    <button id="next-btn" class="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 z-10 bg-primaryBlue hover:bg-primaryBlueDark active:bg-primaryBlueDark text-white w-14 h-14 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg transition font-medium transform active:scale-95 touch-manipulation" style="-webkit-tap-highlight-color: transparent;" title="Next Step">
+                        <i data-lucide="chevron-right" class="w-7 h-7 md:w-6 md:h-6"></i>
                     </button>
 
                     <!-- Card Pages Container -->
                     <div id="card-pages" class="relative overflow-hidden">
                         <!-- PAGE 1: Enter Name & Caption Preview -->
-                        <div class="card-page active p-6 md:p-10 min-h-[500px] flex flex-col">
-                            <div class="flex-1 space-y-6">
-                                <div class="text-center mb-8">
-                                    <h3 class="text-2xl font-display font-bold text-gray-900 mb-2">Step 1</h3>
-                                    <p class="text-gray-600 text-base mb-3 font-medium">Enter Your Name</p>
-                                    <p class="text-gray-500 text-sm max-w-md mx-auto">Type your full name as you'd like it to appear in the caption. The preview will update automatically.</p>
+                        <div class="card-page active p-4 sm:p-6 md:p-10 min-h-[400px] sm:min-h-[500px] flex flex-col">
+                            <div class="flex-1 space-y-4 sm:space-y-6">
+                                <div class="text-center mb-4 sm:mb-8">
+                                    <h3 class="text-xl sm:text-2xl font-display font-bold text-gray-900 mb-1 sm:mb-2">Step 1</h3>
+                                    <p class="text-gray-600 text-sm sm:text-base mb-2 sm:mb-3 font-medium">Enter Your Name</p>
+                                    <p class="text-gray-500 text-xs sm:text-sm max-w-md mx-auto px-2">Type your full name as you'd like it to appear in the caption. The preview will update automatically.</p>
                                 </div>
                                 
-                                <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
-                                    <label class="block text-base font-display font-semibold text-gray-800 mb-3 no-select">Your Name</label>
-                                    <p class="text-gray-500 text-xs mb-4">Enter your full name (e.g., John Doe, Maria Santos)</p>
-                                    <input type="text" id="user-name-input" placeholder="Enter your full name" class="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 font-medium py-4 px-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryBlue focus:border-primaryBlue placeholder-gray-400 text-base transition-all">
+                                <div class="bg-white p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border border-gray-200 shadow-lg">
+                                    <label class="block text-sm sm:text-base font-display font-semibold text-gray-800 mb-2 sm:mb-3 no-select">Your Name</label>
+                                    <p class="text-gray-500 text-xs mb-3 sm:mb-4">Enter your full name (e.g., John Doe, Maria Santos)</p>
+                                    <input type="text" id="user-name-input" placeholder="Enter your full name" class="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 font-medium py-3 sm:py-4 px-4 sm:px-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryBlue focus:border-primaryBlue placeholder-gray-400 text-base transition-all touch-manipulation" style="-webkit-tap-highlight-color: transparent;">
                                 
                                     <!-- Caption Preview -->
-                                    <div class="mt-6 pt-6 border-t border-gray-200">
-                                        <label class="block text-sm font-display font-semibold text-gray-800 mb-3 no-select">Caption Preview</label>
-                                        <p class="text-gray-500 text-xs mb-4">This is how your caption will look. You can copy it after completing all steps.</p>
-                                        <div id="caption-preview" class="bg-gray-50 p-5 rounded-lg border border-gray-200 min-h-[200px] max-h-[300px] overflow-y-auto text-sm text-gray-800 whitespace-pre-wrap leading-relaxed shadow-inner font-sans">
+                                    <div class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+                                        <label class="block text-xs sm:text-sm font-display font-semibold text-gray-800 mb-2 sm:mb-3 no-select">Caption Preview</label>
+                                        <p class="text-gray-500 text-xs mb-3 sm:mb-4">This is how your caption will look. You can copy it after completing all steps.</p>
+                                        <div id="caption-preview" class="bg-gray-50 p-3 sm:p-5 rounded-lg border border-gray-200 min-h-[150px] sm:min-h-[200px] max-h-[250px] sm:max-h-[300px] overflow-y-auto text-xs sm:text-sm text-gray-800 whitespace-pre-wrap leading-relaxed shadow-inner font-sans">
                                             <span class="text-gray-400 italic">Enter your name to see preview...</span>
                                         </div>
                                     </div>
@@ -402,20 +425,20 @@
                         </div>
 
                         <!-- PAGE 2: Select Photo -->
-                        <div class="card-page p-6 md:p-10 min-h-[500px] flex flex-col">
-                            <div class="flex-1 flex flex-col justify-center space-y-6">
-                                <div class="text-center mb-8">
-                                    <h3 class="text-2xl font-display font-bold text-gray-900 mb-2">Step 2</h3>
-                                    <p class="text-gray-600 text-base mb-3 font-medium">Upload Your Photo</p>
-                                    <p class="text-gray-500 text-sm max-w-md mx-auto">Choose a photo from your device. Square photos work best, but any image will work!</p>
+                        <div class="card-page p-4 sm:p-6 md:p-10 min-h-[400px] sm:min-h-[500px] flex flex-col">
+                            <div class="flex-1 flex flex-col justify-center space-y-4 sm:space-y-6">
+                                <div class="text-center mb-4 sm:mb-8">
+                                    <h3 class="text-xl sm:text-2xl font-display font-bold text-gray-900 mb-1 sm:mb-2">Step 2</h3>
+                                    <p class="text-gray-600 text-sm sm:text-base mb-2 sm:mb-3 font-medium">Upload Your Photo</p>
+                                    <p class="text-gray-500 text-xs sm:text-sm max-w-md mx-auto px-2">Choose a photo from your device. Square photos work best, but any image will work!</p>
                                 </div>
                                 
-                                <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
-                                    <p class="text-gray-500 text-xs mb-4 text-center">Click the button below to select your profile picture</p>
-                                    <label for="image-upload-btn" class="w-full flex flex-col items-center justify-center bg-primaryBlue border-2 border-primaryBlue text-white font-semibold py-10 px-4 rounded-lg cursor-pointer hover:bg-primaryBlueDark hover:border-primaryBlueDark custom-transition shadow-md group transform hover:scale-[1.02]">
-                                        <i data-lucide="image-plus" class="w-12 h-12 mb-3"></i>
-                                        <span class="text-lg">Tap here to Upload Photo</span>
-                                        <span class="text-sm opacity-80 mt-1">JPG, PNG, or any image format</span>
+                                <div class="bg-white p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border border-gray-200 shadow-lg">
+                                    <p class="text-gray-500 text-xs mb-3 sm:mb-4 text-center">Click the button below to select your profile picture</p>
+                                    <label for="image-upload-btn" class="w-full flex flex-col items-center justify-center bg-primaryBlue border-2 border-primaryBlue text-white font-semibold py-8 sm:py-10 px-4 rounded-lg cursor-pointer hover:bg-primaryBlueDark hover:border-primaryBlueDark active:bg-primaryBlueDark custom-transition shadow-md group transform active:scale-98 touch-manipulation" style="-webkit-tap-highlight-color: transparent;">
+                                        <i data-lucide="image-plus" class="w-10 h-10 sm:w-12 sm:h-12 mb-2 sm:mb-3"></i>
+                                        <span class="text-base sm:text-lg">Tap here to Upload Photo</span>
+                                        <span class="text-xs sm:text-sm opacity-80 mt-1">JPG, PNG, or any image format</span>
                                     </label>
                                     <input type="file" id="image-upload-btn" accept="image/*">
                                     <p id="file-name" class="text-base text-green-600 mt-4 text-center font-semibold min-h-[1.5rem]"></p>
@@ -424,22 +447,23 @@
                         </div>
 
                         <!-- PAGE 3: Adjust & Download -->
-                        <div class="card-page p-6 md:p-10 min-h-[500px] flex flex-col">
-                            <div class="flex-1 space-y-6">
-                                <div class="text-center mb-8">
-                                    <h3 class="text-2xl font-display font-bold text-gray-900 mb-2">Step 3</h3>
-                                    <p class="text-gray-600 text-base mb-3 font-medium">Adjust & Download</p>
-                                    <p class="text-gray-500 text-sm max-w-md mx-auto">Position your photo, zoom in/out, then download your framed picture and copy the caption.</p>
+                        <div class="card-page p-4 sm:p-6 md:p-10 min-h-[400px] sm:min-h-[500px] flex flex-col">
+                            <div class="flex-1 space-y-4 sm:space-y-6">
+                                <div class="text-center mb-4 sm:mb-8">
+                                    <h3 class="text-xl sm:text-2xl font-display font-bold text-gray-900 mb-1 sm:mb-2">Step 3</h3>
+                                    <p class="text-gray-600 text-sm sm:text-base mb-2 sm:mb-3 font-medium">Adjust & Download</p>
+                                    <p class="text-gray-500 text-xs sm:text-sm max-w-md mx-auto px-2">Position your photo, zoom in/out, then download your framed picture and copy the caption.</p>
                                 </div>
                                 
                                 <!-- Canvas Container -->
                                 <div class="relative bg-gray-100 rounded-lg border border-gray-300 overflow-hidden shadow-md w-full aspect-square touch-none">
                                     
                                     <!-- Guide Overlay -->
-                                    <div class="absolute top-0 left-0 right-0 z-10 bg-primaryBlue py-2.5 text-center border-b border-primaryBlueDark pointer-events-none">
-                                        <div class="flex items-center justify-center gap-2 text-xs font-medium text-white">
-                                            <i data-lucide="move" class="w-4 h-4"></i>
-                                            <span>Drag to move • Pinch to zoom • Use slider below</span>
+                                    <div class="absolute top-0 left-0 right-0 z-10 bg-primaryBlue py-2 sm:py-2.5 text-center border-b border-primaryBlueDark pointer-events-none">
+                                        <div class="flex items-center justify-center gap-1 sm:gap-2 text-[10px] sm:text-xs font-medium text-white px-2">
+                                            <i data-lucide="move" class="w-3 h-3 sm:w-4 sm:h-4"></i>
+                                            <span class="hidden sm:inline">Drag to move • Pinch to zoom • Use slider below</span>
+                                            <span class="sm:hidden">Drag • Pinch • Slider</span>
                                         </div>
                                     </div>
 
@@ -456,47 +480,47 @@
                                 </div>
 
                                 <!-- Button Controls -->
-                                <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-200 mt-4 shadow-sm">
-                                    <button id="zoom-out-btn" class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-medium shadow-sm" title="Zoom Out">
-                                        <i data-lucide="minus" class="w-5 h-5"></i>
+                                <div class="flex justify-between items-center bg-white p-2 sm:p-3 rounded-lg border border-gray-200 mt-3 sm:mt-4 shadow-sm">
+                                    <button id="zoom-out-btn" class="p-3 sm:p-2.5 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 text-gray-700 rounded-lg transition font-medium shadow-sm touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center" style="-webkit-tap-highlight-color: transparent;" title="Zoom Out">
+                                        <i data-lucide="minus" class="w-5 h-5 sm:w-5 sm:h-5"></i>
                                     </button>
-                                    <div class="flex-1 mx-4">
+                                    <div class="flex-1 mx-2 sm:mx-4">
                                         <div class="flex justify-between text-xs text-gray-500 mb-1">
                                             <span>Zoom</span>
                                             <span id="zoom-value" class="font-medium">100%</span>
                                         </div>
-                                        <input type="range" id="zoom-slider" min="0.1" max="3" step="0.05" value="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primaryBlue">
+                                        <input type="range" id="zoom-slider" min="0.1" max="3" step="0.05" value="1" class="w-full h-2 sm:h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primaryBlue touch-manipulation" style="-webkit-tap-highlight-color: transparent;">
                                     </div>
-                                    <button id="zoom-in-btn" class="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-medium shadow-sm" title="Zoom In">
-                                        <i data-lucide="plus" class="w-5 h-5"></i>
+                                    <button id="zoom-in-btn" class="p-3 sm:p-2.5 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 text-gray-700 rounded-lg transition font-medium shadow-sm touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center" style="-webkit-tap-highlight-color: transparent;" title="Zoom In">
+                                        <i data-lucide="plus" class="w-5 h-5 sm:w-5 sm:h-5"></i>
                                     </button>
                                 </div>
 
-                                <div class="space-y-3 pt-6 border-t border-gray-200">
+                                <div class="space-y-3 pt-4 sm:pt-6 border-t border-gray-200">
                                     <div>
                                         <p class="text-gray-500 text-xs mb-2">Save your framed profile picture</p>
-                                        <button id="download-btn" class="w-full bg-accentYellow hover:bg-accentYellowDark text-gray-900 text-lg font-semibold py-4 px-6 rounded-lg custom-transition shadow-md disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transform active:scale-98 hover:scale-[1.02] flex items-center justify-center gap-2" disabled>
+                                        <button id="download-btn" class="w-full bg-accentYellow hover:bg-accentYellowDark active:bg-accentYellowDark text-gray-900 text-base sm:text-lg font-semibold py-4 sm:py-4 px-4 sm:px-6 rounded-lg custom-transition shadow-md disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transform active:scale-98 hover:scale-[1.02] flex items-center justify-center gap-2 touch-manipulation min-h-[48px]" style="-webkit-tap-highlight-color: transparent;" disabled>
                                             <i data-lucide="download" class="w-5 h-5"></i>
-                                            Download Image
+                                            <span>Download Image</span>
                                         </button>
                                     </div>
-                                    <p id="download-error" class="text-sm text-red-600 text-center min-h-[1.5rem]"></p>
+                                    <p id="download-error" class="text-xs sm:text-sm text-red-600 text-center min-h-[1.5rem]"></p>
                                     
                                     <div>
                                         <p class="text-gray-500 text-xs mb-2">Copy the caption to share on social media</p>
-                                        <button id="copy-caption-btn" class="w-full bg-primaryBlue hover:bg-primaryBlueDark text-white text-lg font-semibold py-4 px-6 rounded-lg custom-transition shadow-md disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transform active:scale-98 hover:scale-[1.02] flex items-center justify-center gap-2" disabled>
+                                        <button id="copy-caption-btn" class="w-full bg-primaryBlue hover:bg-primaryBlueDark active:bg-primaryBlueDark text-white text-base sm:text-lg font-semibold py-4 sm:py-4 px-4 sm:px-6 rounded-lg custom-transition shadow-md disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transform active:scale-98 hover:scale-[1.02] flex items-center justify-center gap-2 touch-manipulation min-h-[48px]" style="-webkit-tap-highlight-color: transparent;" disabled>
                                             <i data-lucide="copy" class="w-5 h-5"></i>
-                                            Copy Caption
+                                            <span>Copy Caption</span>
                                         </button>
                                     </div>
-                                    <p id="copy-caption-feedback" class="text-sm text-green-600 text-center min-h-[1.5rem]"></p>
+                                    <p id="copy-caption-feedback" class="text-xs sm:text-sm text-green-600 text-center min-h-[1.5rem]"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Page Indicators -->
-                    <div class="flex justify-center gap-2 p-4 bg-white border-t border-gray-200">
+                    <div class="flex justify-center gap-2 p-3 sm:p-4 bg-white border-t border-gray-200">
                         <span class="page-indicator active w-8 h-2 rounded-full bg-primaryBlue"></span>
                         <span class="page-indicator w-2 h-2 rounded-full bg-gray-300"></span>
                         <span class="page-indicator w-2 h-2 rounded-full bg-gray-300"></span>
@@ -505,26 +529,27 @@
             </main>
         </div>
 
-        <footer class="text-center py-12 px-4 mt-12 bg-primaryBlueDark/50 backdrop-blur-md border-t-4 border-accentYellow">
-            <h4 class="text-white font-display font-bold text-xl mb-6 tracking-wider leading-relaxed">CELEBRATING 96 YEARS OF<br>LAGUNA COLLEGE OF BUSINESS AND ARTS</h4>
+        <footer class="text-center py-8 sm:py-12 px-3 sm:px-4 mt-8 sm:mt-12 bg-primaryBlueDark/50 backdrop-blur-md border-t-4 border-accentYellow">
+            <h4 class="text-white font-display font-bold text-base sm:text-xl mb-4 sm:mb-6 tracking-wider leading-relaxed px-2">CELEBRATING 96 YEARS OF<br>LAGUNA COLLEGE OF BUSINESS AND ARTS</h4>
             
-            <div class="flex justify-center mb-8">
-                 <a href="https://www.facebook.com/LCBAofficial" target="_blank" class="bg-accentYellow border-2 border-white/30 text-primaryBlueDark text-lg font-bold py-3 px-8 rounded-full hover:bg-accentYellowDark hover:text-white custom-transition flex items-center gap-3 shadow-xl transform hover:scale-105 font-mono">
-                    <i data-lucide="facebook" class="w-5 h-5"></i>
-                    Visit LCBA on Facebook
+            <div class="flex justify-center mb-6 sm:mb-8 px-2">
+                 <a href="https://www.facebook.com/LCBAofficial" target="_blank" class="bg-accentYellow border-2 border-white/30 text-primaryBlueDark text-sm sm:text-lg font-bold py-2.5 sm:py-3 px-4 sm:px-8 rounded-full hover:bg-accentYellowDark hover:text-white active:bg-accentYellowDark custom-transition flex items-center gap-2 sm:gap-3 shadow-xl transform active:scale-95 hover:scale-105 font-mono touch-manipulation" style="-webkit-tap-highlight-color: transparent;">
+                    <i data-lucide="facebook" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                    <span class="hidden sm:inline">Visit LCBA on Facebook</span>
+                    <span class="sm:hidden">Facebook</span>
                 </a>
             </div>
 
-            <div class="text-base text-white/90 mb-8 space-y-2 font-light">
+            <div class="text-sm sm:text-base text-white/90 mb-6 sm:mb-8 space-y-1 sm:space-y-2 font-light px-2">
                 <p>Graphics by <span class="font-bold text-accentYellow">Miguel Madamba</span></p>
                 <p>Web design by <span class="font-bold text-accentYellow">Michael Ordenes</span></p>
             </div>
 
-            <div class="border-t border-white/20 pt-6 max-w-xs mx-auto">
-                <p class="text-sm text-white/80 font-light">Visitor count</p>
-                <p id="visitor-count" class="text-3xl font-bold text-accentYellow font-display">0</p>
+            <div class="border-t border-white/20 pt-4 sm:pt-6 max-w-xs mx-auto px-2">
+                <p class="text-xs sm:text-sm text-white/80 font-light">Visitor count</p>
+                <p id="visitor-count" class="text-2xl sm:text-3xl font-bold text-accentYellow font-display">0</p>
             </div>
-            <p class="text-xs text-white/60 mt-6 font-light">© 2026 All Rights Reserved.</p>
+            <p class="text-xs text-white/60 mt-4 sm:mt-6 font-light px-2">© 2026 All Rights Reserved.</p>
         </footer>
 
         <!-- Fixed Corner Logo -->
