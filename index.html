@@ -38,10 +38,27 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #1976D2 100%);
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-color: #0D47A1; /* Fallback color */
             color: #FFFFFF;
             min-height: 100vh;
             overscroll-behavior: none; /* Prevent pull-to-refresh */
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(13, 71, 161, 0.85) 0%, rgba(21, 101, 192, 0.85) 50%, rgba(25, 118, 210, 0.85) 100%);
+            z-index: -1;
         }
         
         /* Gold Accents */
@@ -75,11 +92,23 @@
             position: fixed;
             inset: 0;
             z-index: 10000;
-            background: linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #1976D2 100%);
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #0D47A1;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+        }
+        
+        #loading-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(13, 71, 161, 0.9) 0%, rgba(21, 101, 192, 0.9) 50%, rgba(25, 118, 210, 0.9) 100%);
+            z-index: -1;
         }
         
         #loading-screen.hidden {
@@ -260,9 +289,9 @@
 
     <!-- LOADING SCREEN -->
     <div id="loading-screen">
-            <div class="loading-container">
-            <img id="loading-seal" src="LCBA_Seal.png" alt="LCBA Seal" />
-            <img id="loading-logo" src="96th_logo.png" alt="96th Anniversary Logo" />
+        <div class="loading-container">
+            <img id="loading-seal" src="LCBA_Seal.png" alt="LCBA Seal" loading="eager" />
+            <img id="loading-logo" src="96th_logo.png" alt="96th Anniversary Logo" loading="eager" />
         </div>
     </div>
 
@@ -270,7 +299,7 @@
     <div id="browser-blocker" class="hidden fixed inset-0 z-[9999] flex-col justify-center items-center bg-gradient-to-br from-primaryBlue via-primaryBlueDark to-primaryBlueLight p-4 text-center overflow-y-auto">
         <div class="max-w-md w-full glass-container p-6 rounded-2xl border-2 border-accentYellow">
             <div class="flex justify-center mb-4">
-                <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 object-contain shadow-lg">
+                <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 object-contain shadow-lg" loading="lazy">
             </div>
             
             <h2 class="text-2xl font-display font-bold text-white mb-2">Open in System Browser</h2>
@@ -309,6 +338,7 @@
                     Tap to Copy Link
                 </button>
                 <div id="copy-link-feedback" class="text-sm text-accentYellow font-bold mt-2 h-5"></div>
+                <p class="text-xs text-white/60 mt-2 break-all">https://x64emkei.github.io/LCBA_blast96th/</p>
             </div>
         </div>
     </div>
@@ -317,17 +347,17 @@
     <div id="main-content">
         <header id="app-header" class="fixed top-0 left-0 right-0 z-50 p-4 shadow-xl">
             <div class="container mx-auto flex flex-row justify-center items-center gap-3 md:gap-5">
-                <img id="lcba-seal-header" src="LCBA_Seal.png" alt="LCBA Logo" class="w-12 h-12 md:w-16 md:h-16 shadow-lg shrink-0 object-contain">
+                <img id="lcba-seal-header" src="LCBA_Seal.png" alt="LCBA Logo" class="w-12 h-12 md:w-16 md:h-16 shadow-lg shrink-0 object-contain" loading="lazy">
                 <h1 class="text-base md:text-2xl font-display font-bold text-white uppercase tracking-widest text-center whitespace-nowrap"><span class="text-accentYellow">LCBA</span> 96th Anniversary</h1>
                 <div class="h-8 md:h-10 w-px bg-accentYellow/60"></div>
-                <img src="dpblast_logo.png" alt="DPblast" class="dpblast-logo-img h-8 md:h-12 w-auto object-contain shrink-0">
+                <img src="dpblast_logo.png" alt="DPblast" class="dpblast-logo-img h-8 md:h-12 w-auto object-contain shrink-0" loading="lazy">
             </div>
         </header>
 
         <div class="container mx-auto px-4 py-8" style="padding-top: 150px;"> 
             
             <div class="text-center mb-10 flex flex-col items-center justify-center">
-                <img src="96th_logo.png" alt="96 Years of Excellence" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-6">
+                <img src="96th_logo.png" alt="96 Years of Excellence" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl mb-6" loading="lazy">
                 <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-3 tracking-wide drop-shadow-lg">96 Years of Excellence</h2>
                 <p class="text-white/90 text-lg md:text-xl max-w-2xl mx-auto font-light">Create your anniversary profile picture!</p>
             </div>
@@ -499,7 +529,7 @@
 
         <!-- Fixed Corner Logo -->
         <div class="fixed bottom-6 right-6 z-40 pointer-events-none">
-             <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 md:w-24 md:h-24 shadow-2xl drop-shadow-lg opacity-90 object-contain">
+             <img src="LCBA_Seal.png" alt="LCBA Seal" class="w-20 h-20 md:w-24 md:h-24 shadow-2xl drop-shadow-lg opacity-90 object-contain" loading="lazy">
         </div>
     </div>
 
@@ -553,7 +583,7 @@
         const copyLinkBtn = document.getElementById('copy-link-btn');
         if(copyLinkBtn) {
             copyLinkBtn.addEventListener('click', () => {
-                const url = window.location.href;
+                const url = 'https://x64emkei.github.io/LCBA_blast96th/';
                 navigator.clipboard.writeText(url).then(() => {
                     const fb = document.getElementById('copy-link-feedback');
                     fb.textContent = 'Link Copied!';
@@ -562,7 +592,7 @@
                      // Fallback
                     const fb = document.getElementById('copy-link-feedback');
                     fb.textContent = 'Please copy URL manually from bar.';
-                    fb.classList.replace('text-green-400', 'text-red-400');
+                    fb.classList.replace('text-accentYellow', 'text-red-400');
                 });
             });
         }
@@ -725,9 +755,48 @@
             }
         });
 
+        // Step validation function
+        function canProceedToNext(pageIndex) {
+            if (pageIndex === 0) {
+                // Step 1: Need name entered
+                const nameInput = document.getElementById('user-name-input');
+                return nameInput && nameInput.value.trim() !== '';
+            } else if (pageIndex === 1) {
+                // Step 2: Need photo uploaded
+                return userImage !== null;
+            }
+            return true; // Step 3 is last step
+        }
+
         nextBtn.addEventListener('click', () => {
             if (currentPage < cardPages.length - 1) {
-                showPage(currentPage + 1);
+                // Validate current step before proceeding
+                if (canProceedToNext(currentPage)) {
+                    showPage(currentPage + 1);
+                } else {
+                    // Show error message
+                    let errorMsg = '';
+                    if (currentPage === 0) {
+                        errorMsg = 'Please enter your name before proceeding.';
+                        const nameInput = document.getElementById('user-name-input');
+                        nameInput.focus();
+                        nameInput.classList.add('border-red-500');
+                        setTimeout(() => nameInput.classList.remove('border-red-500'), 3000);
+                    } else if (currentPage === 1) {
+                        errorMsg = 'Please upload a photo before proceeding.';
+                    }
+                    
+                    // Show temporary error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-xl z-50 font-medium';
+                    errorDiv.textContent = errorMsg;
+                    document.body.appendChild(errorDiv);
+                    setTimeout(() => {
+                        errorDiv.style.opacity = '0';
+                        errorDiv.style.transition = 'opacity 0.3s';
+                        setTimeout(() => errorDiv.remove(), 300);
+                    }, 3000);
+                }
             }
         });
 
@@ -769,10 +838,12 @@
                     checkVisibility();
                     draw();
                     
-                    // Auto-advance to next page after photo upload
-                    setTimeout(() => {
-                        showPage(2); // Go to Step 3 (Adjust & Download)
-                    }, 500);
+                    // Auto-advance to next page after photo upload (only if name is also entered)
+                    if (userName && userName.trim() !== '') {
+                        setTimeout(() => {
+                            showPage(2); // Go to Step 3 (Adjust & Download)
+                        }, 500);
+                    }
                 };
                 img.src = event.target.result;
             };
